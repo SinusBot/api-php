@@ -1,6 +1,8 @@
 ### SinusBot API PHP-Class
 <blockquote><h4><em>PHP-Class for the SinusBot (http://sinusbot.com)</em></h4></blockquote>
-<br />
+You can retrieve information with the PHP-Class. It is now possible to view the current status and the current title of the track or stream on your own homepage via PHP.<br><br>
+The PHP-Class is compatible with the hosting version, you can use <a href="http://ts3index.com/hosting/product/teamspeak-3-musicbot.html">TS3index.com MusicBots</a>
+<br /><br />
 #### Example: Connect
 <pre>
 include("sinusbot.class.php");
