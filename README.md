@@ -1,11 +1,15 @@
 ### SinusBot API PHP-Class
 <blockquote><h4><em>PHP-Class for the SinusBot (http://sinusbot.com)</em></h4></blockquote>
 <br />
-#### Fuctions:
+#### Example: Connect
 <pre>
 include("sinusbot.class.php");
 $sinusbot = new SinusBot("127.0.0.1", 8087);
 $sinusbot->login("admin", "foobar");
+</pre>
+<br />
+#### Fuctions:
+<pre>
 $sinusbot->login($username, $password)
 $sinusbot->getFiles()
 $sinusbot->getRadioStations($search)
