@@ -8,7 +8,7 @@ $sinusbot = new SinusBot("127.0.0.1", 8087);
 $sinusbot->login("admin", "foobar");
 </pre>
 <br />
-#### Fuctions:
+#### Functions:
 <pre>
 $sinusbot->login($username, $password)
 $sinusbot->getFiles()
