@@ -1,6 +1,6 @@
 <?php
 include("sinusbot.class.php");
-$sinusbot = new SinusBot("127.0.0.1", 8087);
+$sinusbot = new SinusBot("http://127.0.0.1:8087");
 $sinusbot->login("admin", "foobar");
 
 $daten = array();
