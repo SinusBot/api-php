@@ -6,11 +6,12 @@ The PHP-Class is compatible with the hosting version, you can use <a href="http:
 #### Example: Connect
 <pre>
 include("sinusbot.class.php");
-$sinusbot = new SinusBot("127.0.0.1", 8087);
+$sinusbot = new SinusBot("http://127.0.0.1:8087");
 $sinusbot->login("admin", "foobar");
 </pre>
 <br />
 #### Functions:
+<blockquote><em>The parameter $instanceUUID is optional for every function having this parameter. However, if omitting it, you must have selected the instance via <strong>$sinusbot->selectInstance("INSTANCEUUID")</strong> beforehand.</em></blockquote>
 <pre>
 $sinusbot->login($username, $password)
 $sinusbot->getFiles()
@@ -25,7 +26,7 @@ $sinusbot->deletePlaylist($playlistUUID)
 $sinusbot->getPlaylistTracks($playlistUUID)
 $sinusbot->addPlaylistTrack($trackUUID, $playlistUUID)
 $sinusbot->deletePlaylistTrack($trackPosition, $playlistUUID)
-$sinusbot->eletePlaylistTracks($playlistUUID)
+$sinusbot->deletePlaylistTracks($playlistUUID)
 $sinusbot->getQueueTracks($instanceUUID)
 $sinusbot->appendQueueTrack($trackUUID, $instanceUUID)
 $sinusbot->prependQueueTrack($trackUUID, $instanceUUID)
@@ -72,6 +73,7 @@ $sinusbot->getSettings($instanceUUID)
 $sinusbot->editSettings($data, $instanceUUID)
 $sinusbot->getChannels($instanceUUID)
 $sinusbot->getInstances()
+$sinusbot->selectInstance($instanceUUID)
 $sinusbot->createInstance($nickname)
 $sinusbot->deleteInstance($instanceUUID)
 $sinusbot->spawnInstance($instanceUUID)
