@@ -1,8 +1,8 @@
 <?php
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   file                 :  sinusbot.class.php
- *   version              :  0.1
- *   last modified        :  26. Juli 2015
+ *   version              :  0.2
+ *   last modified        :  27. Juli 2015
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   author               :  Manuel Hettche
  *   copyright            :  (C) 2015 TS3index.com
@@ -28,18 +28,13 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 class SinusBot {
-  public $wiHost = '127.0.0.1';
-  public $wiPort = 8087;
+  public $wiURL = NULL;
   public $wiToken = NULL;
-  public $botID = NULL;
+  public $apiURL = NULL;
+  public $botUUID = NULL;
+  public $instanceUUID = NULL;
 
-  public function __construct($wiHost = '127.0.0.1', $wiPort = 8087, $botID = NULL) {
-    $this->wiHost = $wiHost;
-    $this->wiPort = $wiPort;
-    $this->botID = ($botID == NULL) ? $this->getDefaultBot() : $botID;
-  }
-  
-  
+
 /**
   * login
   *
@@ -59,20 +54,9 @@ class SinusBot {
   * @return boolean success
   */
   public function login($username, $password) {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/login',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_POSTFIELDS => json_encode(array('username' => $username, 'password' => $password, 'botId' => $this->botID)),
-        CURLOPT_HTTPHEADER => array('Content-Type: application/json')
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode == 200) {
-      $this->wiToken = json_decode($data, TRUE)['token'];
-    }
-    return json_decode($data, TRUE);
+    $login = $this->request('/bot/login', 'POST', json_encode(array('username' => $username, 'password' => $password, 'botId' => $this->botUUID)));
+    if ($login != NULL AND isset($login['token'])) $this->wiToken = $login['token'];
+    return $login;
   }
   
   
@@ -121,17 +105,7 @@ class SinusBot {
   * @return array files
   */
   public function getFiles() {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/files',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/files');
   }
   
   
@@ -165,17 +139,7 @@ class SinusBot {
   * @return array stations
   */
   public function getRadioStations($search = "") {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/stations?q='.urlencode($search),
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/stations?q='.urlencode($search));
   }
   
   
@@ -218,18 +182,8 @@ class SinusBot {
   * @return array status
   */
   public function getStatus($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/status',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/status');;
   }
   
   
@@ -286,17 +240,7 @@ class SinusBot {
   * @return array playlists
   */
   public function getInfos() {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/info',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/info');
   }
   
   
@@ -334,18 +278,8 @@ class SinusBot {
   * @return array log
   */
   public function getInstanceLog($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/log',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/log');
   }
   
   
@@ -376,17 +310,7 @@ class SinusBot {
   * @return array playlists
   */
   public function getPlaylists() {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/playlists',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/playlists');
   }
   
   
@@ -407,18 +331,7 @@ class SinusBot {
   * @return array status
   */
   public function createPlaylist($playlistName) {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/playlists',
-        CURLOPT_POSTFIELDS => json_encode(array("name" => $playlistName)),
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200 AND $httpcode != 201) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/playlists', 'POST', json_encode(array("name" => $playlistName)));
   }
   
   
@@ -439,19 +352,7 @@ class SinusBot {
   * @return array status
   */
   public function renamePlaylist($playlistName, $playlistUUID) {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/playlists/'.$playlistUUID,
-        CURLOPT_POSTFIELDS => json_encode(array("name" => $playlistName)),
-        CURLOPT_CUSTOMREQUEST => 'PATCH',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200 ) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/playlists/'.$playlistUUID, 'PATCH', json_encode(array("name" => $playlistName)));
   }
   
   
@@ -471,18 +372,7 @@ class SinusBot {
   * @return array status
   */
   public function deletePlaylist($playlistUUID) {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/playlists/'.$playlistUUID,
-        CURLOPT_CUSTOMREQUEST => 'DELETE',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/playlists/'.$playlistUUID, 'DELETE');
   }
   
   
@@ -512,17 +402,7 @@ class SinusBot {
   * @return array files
   */
   public function getPlaylistTracks($playlistUUID) {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/playlists/'.$playlistUUID,
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/playlists/'.$playlistUUID);
   }
   
   
@@ -543,18 +423,7 @@ class SinusBot {
   * @return array status
   */
   public function addPlaylistTrack($trackUUID, $playlistUUID) {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/playlists/'.$playlistUUID,
-        CURLOPT_POSTFIELDS => json_encode(array("uuid" => $trackUUID)),
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200 AND $httpcode != 201) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/playlists/'.$playlistUUID, 'POST', json_encode(array("uuid" => $trackUUID)));
   }
   
   
@@ -575,18 +444,7 @@ class SinusBot {
   * @return array status
   */
   public function deletePlaylistTrack($trackPosition, $playlistUUID) {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/playlists/'.$playlistUUID.'/'.$trackPosition,
-        CURLOPT_CUSTOMREQUEST => 'DELETE',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/playlists/'.$playlistUUID.'/'.$trackPosition, 'DELETE');
   }
   
   
@@ -609,18 +467,7 @@ class SinusBot {
     $currentTracks = $this->getPlaylistTracks($playlistUUID);
     if ($currentTracks == NULL OR !is_array($currentTracks)) return NULL;
     
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/bulk/playlist/'.$playlistUUID.'/files',
-        CURLOPT_POSTFIELDS => json_encode(array("op" => "delete", "files" => array_keys($currentTracks['entries']))),
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/bulk/playlist/'.$playlistUUID.'/files', 'POST', json_encode(array("op" => "delete", "files" => array_keys($currentTracks['entries']))));
   }
   
   
@@ -641,18 +488,8 @@ class SinusBot {
   * @return array files
   */
   public function getQueueTracks($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/queue',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/queue');
   }
   
   
@@ -673,19 +510,8 @@ class SinusBot {
   * @return array status
   */
   public function appendQueueTrack($trackUUID, $instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/queue/append/'.$trackUUID,
-        CURLOPT_POSTFIELDS => "",
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200 AND $httpcode != 201) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/queue/append/'.$trackUUID, 'POST', "");
   }
   
   
@@ -706,19 +532,8 @@ class SinusBot {
   * @return array status
   */
   public function prependQueueTrack($trackUUID, $instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/queue/prepend/'.$trackUUID,
-        CURLOPT_POSTFIELDS => "",
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200 AND $httpcode != 201) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/queue/prepend/'.$trackUUID, 'POST', "");
   }
   
   
@@ -739,25 +554,13 @@ class SinusBot {
   * @return array status
   */
   public function deleteQueueTrack($trackPosition, $instanceUUID) {
-    if ($instanceUUID == NULL) return NULL;
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
     
     $currentTracks = $this->getQueueTracks($instanceUUID);
     if ($currentTracks == NULL OR !is_array($currentTracks)) return NULL;
     unset($currentTracks[$trackPosition]);
     
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/queue',
-        CURLOPT_POSTFIELDS => json_encode(array_values($currentTracks)),
-        CURLOPT_CUSTOMREQUEST => 'PATCH',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/i/'.$instanceUUID.'/queue', 'PATCH', json_encode(array_values($currentTracks)));
   }
   
   
@@ -777,20 +580,8 @@ class SinusBot {
   * @return array status
   */
   public function deleteQueueTracks($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/queue',
-        CURLOPT_POSTFIELDS => json_encode(array()),
-        CURLOPT_CUSTOMREQUEST => 'PATCH',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/queue', 'PATCH', json_encode(array()));
   }
   
   
@@ -812,19 +603,8 @@ class SinusBot {
   * @return array status
   */
   public function say($text, $locale, $instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/say',
-        CURLOPT_POSTFIELDS => json_encode(array("text" => $text, "locale" => $locale)),
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/say', 'POST', json_encode(array("text" => $text, "locale" => $locale)));
   }
   
   
@@ -845,19 +625,8 @@ class SinusBot {
   * @return array status
   */
   public function playTrack($trackUUID, $instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/play/byId/'.$trackUUID,
-        CURLOPT_POSTFIELDS => "",
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/play/byId/'.$trackUUID, 'POST', '');
   }
   
   
@@ -878,19 +647,8 @@ class SinusBot {
   * @return array status
   */
   public function playURL($url, $instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/playUrl?url='.urlencode($url),
-        CURLOPT_POSTFIELDS => "",
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/playUrl?url='.urlencode($url), 'POST', '');
   }
   
   
@@ -912,19 +670,8 @@ class SinusBot {
   * @return array status
   */
   public function playPlaylist($playlistUUID, $playlistIndex = 0, $instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/play/byList/'.$playlistUUID.'/'.$playlistIndex,
-        CURLOPT_POSTFIELDS => "",
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/play/byList/'.$playlistUUID.'/'.$playlistIndex, 'POST', '');
   }
   
   
@@ -944,19 +691,8 @@ class SinusBot {
   * @return array status
   */
   public function playPrevious($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/playPrevious',
-        CURLOPT_POSTFIELDS => "",
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/playPrevious', 'POST', '');
   }
   
   
@@ -976,20 +712,10 @@ class SinusBot {
   * @return array status
   */
   public function playNext($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/playNext',
-        CURLOPT_POSTFIELDS => "",
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/playNext', 'POST', '');
   }
+  
   
 /**
   * playRepeat
@@ -1008,19 +734,8 @@ class SinusBot {
   * @return array status
   */
   public function playRepeat($repeatState = 1, $instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/repeat/'.$repeatState,
-        CURLOPT_POSTFIELDS => "",
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/repeat/'.$repeatState, 'POST', '');
   }
   
   
@@ -1041,19 +756,8 @@ class SinusBot {
   * @return array status
   */
   public function playShuffle($shuffleState = 1, $instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/shuffle/'.$shuffleState,
-        CURLOPT_POSTFIELDS => "",
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/shuffle/'.$shuffleState, 'POST', '');
   }
   
   
@@ -1073,19 +777,8 @@ class SinusBot {
   * @return array status
   */
   public function stop($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/stop',
-        CURLOPT_POSTFIELDS => "",
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/stop', 'POST', '');
   }
   
   
@@ -1106,19 +799,8 @@ class SinusBot {
   * @return array status
   */
   public function seekPlayback($position = 0, $instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/seek/'.$position,
-        CURLOPT_POSTFIELDS => "",
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/seek/'.$position, 'POST', '');
   }
   
   
@@ -1130,19 +812,8 @@ class SinusBot {
   * @return array   array of uuids
   */
   public function getPlayedTracks($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/recent',
-        CURLOPT_POSTFIELDS => "",
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/recent', 'POST', '');
   }
   
   
@@ -1163,19 +834,7 @@ class SinusBot {
   * @return array status
   */
   public function moveTrack($trackUUID, $parent = "") {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/files/'.$trackUUID,
-        CURLOPT_POSTFIELDS => json_encode(array("parent" => $parent)),
-        CURLOPT_CUSTOMREQUEST => 'PATCH',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/files/'.$trackUUID, 'PATCH', json_encode(array("parent" => $parent)));
   }
   
   
@@ -1198,19 +857,7 @@ class SinusBot {
   * @return array status
   */
   public function editTrack($trackUUID, $title, $artist = "", $album = "") {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/files/'.$trackUUID,
-        CURLOPT_POSTFIELDS => json_encode(array("displayTitle" => $title, "title" => $title, "artist" => $artist, "album" => $album)),
-        CURLOPT_CUSTOMREQUEST => 'PATCH',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/files/'.$trackUUID, 'PATCH', json_encode(array("displayTitle" => $title, "title" => $title, "artist" => $artist, "album" => $album)));
   }
   
   
@@ -1230,18 +877,7 @@ class SinusBot {
   * @return array status
   */
   public function deleteTrack($trackUUID) {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/files/'.$trackUUID,
-        CURLOPT_CUSTOMREQUEST => 'DELETE',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/files/'.$trackUUID, 'DELETE');
   }
   
   
@@ -1253,7 +889,7 @@ class SinusBot {
   * @return integer
   */
   public function getVolume($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
     return $this->getStatus($instanceUUID)['volume'];
   }
   
@@ -1275,19 +911,8 @@ class SinusBot {
   * @return array status
   */
   public function setVolume($volume = 50, $instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/volume/set/'.$volume,
-        CURLOPT_POSTFIELDS => "",
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/volume/set/'.$volume, 'POST', '');
   }
   
   
@@ -1307,19 +932,8 @@ class SinusBot {
   * @return array status
   */
   public function setVolumeUp($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/volume/up',
-        CURLOPT_POSTFIELDS => "",
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/volume/up', 'POST', '');
   }
   
   
@@ -1339,19 +953,8 @@ class SinusBot {
   * @return array status
   */
   public function setVolumeDown($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/volume/down',
-        CURLOPT_POSTFIELDS => "",
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/volume/down', 'POST', '');
   }
   
   
@@ -1374,18 +977,7 @@ class SinusBot {
   * @return array status
   */
   public function addURL($url, $title, $parent = "") {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/url',
-        CURLOPT_POSTFIELDS => json_encode(array("url" => $url, "title" => $title, "parent" => $parent)),
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200 AND $httpcode != 201) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/url', 'POST', json_encode(array("url" => $url, "title" => $title, "parent" => $parent)));
   }
   
   
@@ -1407,18 +999,7 @@ class SinusBot {
   * @return array status
   */
   public function addFolder($folderName = "Folder", $parent = "") {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/folders',
-        CURLOPT_POSTFIELDS => json_encode(array("name" => $folderName, "parent" => $parent)),
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200 AND $httpcode != 201) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/folders', 'POST', json_encode(array("name" => $folderName, "parent" => $parent)));
   }
   
   
@@ -1460,19 +1041,7 @@ class SinusBot {
   * @return array status
   */
   public function renameFolder($folderName, $folderUUID) {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/files/'.$folderUUID,
-        CURLOPT_POSTFIELDS => json_encode(array("uuid" => $folderUUID, "type" => "folder", "title" => $folderName)),
-        CURLOPT_CUSTOMREQUEST => 'PATCH',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/files/'.$folderUUID, 'PATCH', json_encode(array("uuid" => $folderUUID, "type" => "folder", "title" => $folderName)));
   }
   
   
@@ -1526,17 +1095,7 @@ class SinusBot {
   * @return array
   */
   public function getJobs() {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/jobs',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/jobs');
   }
   
   
@@ -1557,18 +1116,7 @@ class SinusBot {
   * @return array status
   */
   public function addJob($URL) {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/jobs',
-        CURLOPT_POSTFIELDS => json_encode(array('url'=>$URL)),
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/jobs', 'POST', json_encode(array('url'=>$URL)));
   }
   
   
@@ -1588,18 +1136,7 @@ class SinusBot {
   * @return array status
   */
   public function deleteJob($jobUUID) {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/jobs/'.$jobUUID,
-        CURLOPT_CUSTOMREQUEST => 'DELETE',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/jobs/'.$jobUUID, 'DELETE');
   }
   
   
@@ -1618,18 +1155,7 @@ class SinusBot {
   * @return array status
   */
   public function deleteFinishedJobs() {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/jobs',
-        CURLOPT_CUSTOMREQUEST => 'DELETE',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/jobs', 'DELETE');
   }
   
   
@@ -1663,18 +1189,7 @@ class SinusBot {
   * @return array status
   */
   public function uploadTrack($path) {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/upload',
-        CURLOPT_POSTFIELDS => file_get_contents($path),
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/upload', 'POST', file_get_contents($path));
   }
   
   
@@ -1695,19 +1210,8 @@ class SinusBot {
   * @return array status
   */
   public function uploadAvatar($path, $instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;    
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/avatar',
-        CURLOPT_POSTFIELDS => file_get_contents($path),
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;    
+    return $this->request('/bot/i/'.$instanceUUID.'/avatar', 'POST', file_get_contents($path));
   }
   
   
@@ -1727,23 +1231,9 @@ class SinusBot {
   * @return array status
   */
   public function deleteAvatar($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/avatar',
-        CURLOPT_CUSTOMREQUEST => 'DELETE',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/avatar', 'DELETE');
   }
-  
-  
-  
   
   
 /**
@@ -1777,17 +1267,7 @@ class SinusBot {
   * @return array users
   */
   public function getUsers() {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/users',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/users');
   }
   
   
@@ -1810,18 +1290,7 @@ class SinusBot {
   * @return array status
   */
   public function addUser($username, $password, $privileges = 0) {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/users',
-        CURLOPT_POSTFIELDS => json_encode(array('username'=>$username, 'password'=>$password, 'privileges'=>$privileges)),
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200 AND $httpcode != 201) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/users', 'POST', json_encode(array('username'=>$username, 'password'=>$password, 'privileges'=>$privileges)));
   }
   
   
@@ -1854,19 +1323,7 @@ class SinusBot {
   * @return array status
   */
   public function setUserPassword($password, $userUUID) {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/users/'.$userUUID,
-        CURLOPT_POSTFIELDS => json_encode(array('password'=>$password)),
-        CURLOPT_CUSTOMREQUEST => 'PATCH',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/users/'.$userUUID, 'PATCH', json_encode(array('password'=>$password)));
   }
   
   
@@ -1899,19 +1356,7 @@ class SinusBot {
   * @return array status
   */
   public function setUserPrivileges($privileges, $userUUID) {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/users/'.$userUUID,
-        CURLOPT_POSTFIELDS => json_encode(array('privileges'=>$privileges)),
-        CURLOPT_CUSTOMREQUEST => 'PATCH',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/users/'.$userUUID, 'PATCH', json_encode(array('privileges'=>$privileges)));
   }
   
   
@@ -1944,19 +1389,7 @@ class SinusBot {
   * @return array status
   */
   public function setUserIdentity($identity, $userUUID) {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/users/'.$userUUID,
-        CURLOPT_POSTFIELDS => json_encode(array('tsuid'=>$identity)),
-        CURLOPT_CUSTOMREQUEST => 'PATCH',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/users/'.$userUUID, 'PATCH', json_encode(array('tsuid'=>$identity)));
   }
   
   
@@ -1989,19 +1422,7 @@ class SinusBot {
   * @return array status
   */
   public function setUserServergroup($groupID, $userUUID) {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/users/'.$userUUID,
-        CURLOPT_POSTFIELDS => json_encode(array('tsgid'=>$groupID)),
-        CURLOPT_CUSTOMREQUEST => 'PATCH',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/users/'.$userUUID, 'PATCH', json_encode(array('tsgid'=>$groupID)));
   }
   
   
@@ -2021,18 +1442,7 @@ class SinusBot {
   * @return array status
   */
   public function deleteUser($userUUID) {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/users/'.$userUUID,
-        CURLOPT_CUSTOMREQUEST => 'DELETE',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/users/'.$userUUID, 'DELETE');
   }
   
   
@@ -2076,18 +1486,8 @@ class SinusBot {
   * @return array users
   */
   public function getSettings($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/settings',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/settings');
   }
   
   
@@ -2117,20 +1517,8 @@ class SinusBot {
   * @return array status
   */
   public function editSettings($data, $instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/settings',
-        CURLOPT_POSTFIELDS => json_encode($data),
-        CURLOPT_CUSTOMREQUEST => 'PATCH',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/settings', 'PATCH', json_encode($data));
   }
   
   
@@ -2216,18 +1604,8 @@ class SinusBot {
   * @return array channels
   */
   public function getChannels($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/channels',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/channels');
   }
   
   
@@ -2262,17 +1640,24 @@ class SinusBot {
   * @return array instances
   */
   public function getInstances() {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/instances',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/instances');
+  }
+  
+  
+/**
+  * selectInstance
+  *
+  * @access public
+  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
+  * @return boolean
+  */
+  public function selectInstance($instanceUUID) {
+    if ($this->getStatus($instanceUUID) == NULL) {
+      return false;
+    } else {
+      $this->instanceUUID = $instanceUUID;
+      return true;
+    }
   }
   
   
@@ -2293,18 +1678,7 @@ class SinusBot {
   * @return array status
   */
   public function createInstance($nickname = "TS3index.com MusicBot") {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/instances',
-        CURLOPT_POSTFIELDS => json_encode(array("nick" => $nickname)),
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200 AND $httpcode != 201) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/instances', 'POST', json_encode(array("nick" => $nickname)));
   }
   
   
@@ -2324,19 +1698,8 @@ class SinusBot {
   * @return array status
   */
   public function deleteInstance($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/instances/'.$instanceUUID,
-        CURLOPT_CUSTOMREQUEST => 'DELETE',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/instances/'.$instanceUUID, 'DELETE');
   }
   
   
@@ -2356,19 +1719,8 @@ class SinusBot {
   * @return array status
   */
   public function spawnInstance($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/spawn',
-        CURLOPT_POSTFIELDS => "",
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/spawn', 'POST', '');
   }
   
   
@@ -2388,19 +1740,8 @@ class SinusBot {
   * @return array status
   */
   public function respawnInstance($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/respawn',
-        CURLOPT_POSTFIELDS => "",
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/respawn', 'POST', '');
   }
   
   
@@ -2420,19 +1761,8 @@ class SinusBot {
   * @return array status
   */
   public function killInstance($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/kill',
-        CURLOPT_POSTFIELDS => "",
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/kill', 'POST', '');
   }
   
   
@@ -2446,11 +1776,11 @@ class SinusBot {
   * @return string  url (opus-encoded-ogg-stream)
   */
   public function getWebStream($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
     $token = $this->getWebStreamToken($instanceUUID);
     if ($token == NULL) return NULL;
     
-    return 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/stream/'.$token;
+    return $this->apiURL.'/bot/i/'.$instanceUUID.'/stream/'.$token;
   }
   
   
@@ -2464,19 +1794,9 @@ class SinusBot {
   * @return string  token
   */
   public function getWebStreamToken($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/i/'.$instanceUUID.'/streamToken',
-        CURLOPT_POSTFIELDS => "",
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE)['token'];
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    $tokenRequest = $this->request('/bot/i/'.$instanceUUID.'/streamToken', 'POST', '');
+    return (isset($tokenRequest['token'])) ? $tokenRequest['token'] : NULL;
   }
   
   
@@ -2490,15 +1810,10 @@ class SinusBot {
   * @return string
   */
   public function getDefaultBot() {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/botId',
-        CURLOPT_RETURNTRANSFER => TRUE
-    ));
-    $data = curl_exec($ch);
-    curl_close($ch);
-    return json_decode($data, TRUE)['defaultBotId'];
+    $botRequest = $this->request('/botId');
+    return (isset($botRequest['defaultBotId'])) ? $botRequest['defaultBotId'] : NULL;
   }
+  
   
 /**
   * getBotLog
@@ -2533,17 +1848,7 @@ class SinusBot {
   * @return array log
   */
   public function getBotLog() {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'http://'.$this->wiHost.':'.$this->wiPort.'/api/v1/bot/log',
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
-    ));
-    $data = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($httpcode != 200) return NULL;
-    return json_decode($data, TRUE);
+    return $this->request('/bot/log');
   }
   
   
@@ -2558,7 +1863,7 @@ class SinusBot {
   * @return string  url
   */
   public function getThumbnail($thumbnail) {
-    return 'http://'.$this->wiHost.':'.$this->wiPort.'/cache/'.$thumbnail;
+    return $this->wiURL.'/cache/'.$thumbnail;
   }
   
   
@@ -2570,7 +1875,7 @@ class SinusBot {
   * @return boolean
   */
   public function isPlaying($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
     return (boolean) $this->getStatus($instanceUUID)['playing'];
   }
   
@@ -2583,8 +1888,110 @@ class SinusBot {
   * @return boolean
   */
   public function isRunning($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) return NULL;
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
     return (boolean) $this->getStatus($instanceUUID)['running'];
   }
+  
+  
+//----------------------------------------------------------------------
+// Internal Functions
+//----------------------------------------------------------------------
+  
+  
+/**
+  * __construct
+  *
+  * @access private
+  * @param  string  $wiURL    http://127.0.0.1:8087
+  * @param  string  $botUUID  4852efdc-9705-4706-e469-cfvf77favf33
+  * @return void
+  */
+  function __construct($wiURL = 'http://127.0.0.1:8087', $botUUID = NULL) {
+    $this->wiURL = $wiURL;
+    $this->apiURL = $this->wiURL.'/api/v1';
+    $this->botUUID = ($botUUID == NULL) ? $this->getDefaultBot() : $botUUID;
+  }
+  
+  
+/**
+  * request
+  *
+  * @access private
+  * @param  string  $path    /bot/instances
+  * @param  string  $method  GET
+  * @param  string  $method  NULL
+  * @return array
+  */
+  private function request($path, $method = "GET", $fields = NULL) {
+    $ch = curl_init();
+    curl_setopt_array($ch, array(
+        CURLOPT_URL => $this->apiURL.$path,
+        CURLOPT_CUSTOMREQUEST => $method,
+        CURLOPT_RETURNTRANSFER => TRUE,
+        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
+    ));
+    if ($fields != NULL) curl_setopt($ch, CURLOPT_POSTFIELDS, $fields); 
+    $data = curl_exec($ch);
+    
+    if ($data === false) {
+      $data = array('success' => false, 'error' => curl_error($ch));
+    } else {
+      $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+      if ($httpcode != 200 AND $httpcode != 201) $data = array('success' => false, 'error' => $this->getError($httpcode));
+    }
+    
+    curl_close($ch);
+    return (is_array($data)) ? $data : json_decode($data, TRUE);
+  }
+  
+  
+/**
+  * getError
+  *
+  * @access private
+  * @param  integer  $code    401
+  * @return string
+  */  
+  private function getError($code = 0) {
+    switch ($code) {
+        case 100: return 'Continue';
+        case 101: return 'Switching Protocols';
+        case 200: return 'OK';
+        case 201: return 'Created';
+        case 202: return 'Accepted';
+        case 203: return 'Non-Authoritative Information';
+        case 204: return 'No Content';
+        case 205: return 'Reset Content';
+        case 206: return 'Partial Content';
+        case 300: return 'Multiple Choices';
+        case 301: return 'Moved Permanently';
+        case 302: return 'Moved Temporarily';
+        case 303: return 'See Other';
+        case 304: return 'Not Modified';
+        case 305: return 'Use Proxy';
+        case 400: return 'Bad Request';
+        case 401: return 'Unauthorized';
+        case 402: return 'Payment Required';
+        case 403: return 'Forbidden';
+        case 404: return 'Not Found';
+        case 405: return 'Method Not Allowed';
+        case 406: return 'Not Acceptable';
+        case 407: return 'Proxy Authentication Required';
+        case 408: return 'Request Time-out';
+        case 409: return 'Conflict';
+        case 410: return 'Gone';
+        case 411: return 'Length Required';
+        case 412: return 'Precondition Failed';
+        case 413: return 'Request Entity Too Large';
+        case 414: return 'Request-URI Too Large';
+        case 415: return 'Unsupported Media Type';
+        case 500: return 'Internal Server Error';
+        case 501: return 'Not Implemented';
+        case 502: return 'Bad Gateway';
+        case 503: return 'Service Unavailable';
+        case 504: return 'Gateway Time-out';
+        case 505: return 'HTTP Version not supported';
+        default: return 'Unknown HTTP status code: ' . $code;
+    }
+  }
 }
-?>
