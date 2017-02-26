@@ -1677,8 +1677,8 @@ class SinusBot {
   * @param  string  $nickname  Nickname
   * @return array status
   */
-  public function createInstance($nickname = "TS3index.com MusicBot") {
-    return $this->request('/bot/instances', 'POST', json_encode(array("nick" => $nickname)));
+  public function createInstance($nickname = "TS3index.com MusicBot", $backend = "ts3") {
+    return $this->request('/bot/instances', 'POST', json_encode(array("backend" => $backend, "nick" => $nickname)));
   }
   
   
