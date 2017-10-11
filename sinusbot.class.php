@@ -1,8 +1,8 @@
 <?php
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   file                 :  sinusbot.class.php
- *   version              :  0.2
- *   last modified        :  27. Juli 2015
+ *   version              :  0.3
+ *   last modified        :  11. October 2017
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   author               :  Manuel Hettche
  *   copyright            :  (C) 2015 TS3index.com
@@ -30,6 +30,7 @@
 class SinusBot {
   public $wiURL = NULL;
   public $wiToken = NULL;
+  public $wiTimeout = NULL;
   public $apiURL = NULL;
   public $botUUID = NULL;
   public $instanceUUID = NULL;
@@ -1518,7 +1519,7 @@ class SinusBot {
   */
   public function editSettings($data, $instanceUUID = NULL) {
     if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
-    return $this->request('/bot/i/'.$instanceUUID.'/settings', 'PATCH', json_encode($data));
+    return $this->request('/bot/i/'.$instanceUUID.'/settings', 'POST', json_encode($data));
   }
   
   
@@ -1906,10 +1907,34 @@ class SinusBot {
   * @param  string  $botUUID  4852efdc-9705-4706-e469-cfvf77favf33
   * @return void
   */
-  function __construct($wiURL = 'http://127.0.0.1:8087', $botUUID = NULL) {
+  function __construct($wiURL = 'http://127.0.0.1:8087', $botUUID = NULL, $wiTimeout = 8000) {
     $this->wiURL = $wiURL;
     $this->apiURL = $this->wiURL.'/api/v1';
+    $this->wiTimeout = $wiTimeout;
     $this->botUUID = ($botUUID == NULL) ? $this->getDefaultBot() : $botUUID;
+  }
+  
+  
+/**
+  * __destruct
+  * 
+  * @access private
+  * @return void
+  */
+  function __destruct() {
+  }
+  
+  
+/**
+  * __call
+  * 
+  * @access private
+  * @param  string  $name   method name
+  * @param  array   $args   method arguments
+  * @return void
+  */
+  function __call($name, $args) {
+    return 'Method '.$name.' doesn\'t exist';
   }
   
   
@@ -1926,10 +1951,19 @@ class SinusBot {
     $ch = curl_init();
     curl_setopt_array($ch, array(
         CURLOPT_URL => $this->apiURL.$path,
+        CURLOPT_HTTPHEADER => array(
+            "Accept:application/json, text/plain, */*",
+            "Accept-Encoding:gzip, deflate",
+            "Content-Type:application/json",
+            "Authorization: Bearer ".$this->wiToken
+        ),
         CURLOPT_CUSTOMREQUEST => $method,
-        CURLOPT_RETURNTRANSFER => TRUE,
-        CURLOPT_HTTPHEADER => array('Authorization: Bearer '.$this->wiToken)
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_SSL_VERIFYHOST => false,
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_TIMEOUT_MS => $this->wiTimeout
     ));
+    if ($fields != NULL) curl_setopt($ch, CURLOPT_POSTFIELDS, $fields); 
     if ($fields != NULL) curl_setopt($ch, CURLOPT_POSTFIELDS, $fields); 
     $data = curl_exec($ch);
     
