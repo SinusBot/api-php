@@ -1964,7 +1964,6 @@ class SinusBot {
         CURLOPT_TIMEOUT_MS => $this->wiTimeout
     ));
     if ($fields != NULL) curl_setopt($ch, CURLOPT_POSTFIELDS, $fields); 
-    if ($fields != NULL) curl_setopt($ch, CURLOPT_POSTFIELDS, $fields); 
     $data = curl_exec($ch);
     
     if ($data === false) {
