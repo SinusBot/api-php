@@ -1781,7 +1781,7 @@ class SinusBot {
     $token = $this->getWebStreamToken($instanceUUID);
     if ($token == NULL) return NULL;
     
-    return $this->apiURL.'/bot/i/'.$instanceUUID.'/stream/'.$token;
+    return $this->apiURL.'/b/bot/i/'.$instanceUUID.'/stream/'.$token;
   }
   
   
