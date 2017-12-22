@@ -1,18 +1,25 @@
-### SinusBot API PHP-Class
-<blockquote><h4><em>PHP-Class for the SinusBot (http://sinusbot.com)</em></h4></blockquote>
-You can retrieve information with the PHP-Class. It is now possible to view the current status and the current title of the track or stream on your own homepage via PHP.<br><br>
-The PHP-Class is compatible with the hosting version, you can use <a href="http://ts3index.com/hosting/product/teamspeak-3-musicbot.html">TS3index.com MusicBots</a>
-<br /><br />
+# SinusBot API PHP-Class
+
+> PHP-Class for the SinusBot (http://sinusbot.com)
+
+You can retrieve information with the PHP-Class. It is now possible to view the current status and the current title of the track or stream on your own homepage via PHP.
+
+The PHP-Class is compatible with the hosting version, you can use e.g. [TS3index.com](https://ts3index.com/hosting/product/teamspeak-3-musicbot.html) musicbots
+
 #### Example: Connect
-<pre>
+
+```php
 include("sinusbot.class.php");
 $sinusbot = new SinusBot("http://127.0.0.1:8087");
 $sinusbot->login("admin", "foobar");
-</pre>
-<br />
+```
+
 #### Functions:
-<blockquote><em>The parameter $instanceUUID is optional for every function having this parameter. However, if omitting it, you must have selected the instance via <strong>$sinusbot->selectInstance("INSTANCEUUID")</strong> beforehand.</em></blockquote>
-<pre>
+
+The parameter $instanceUUID is optional for every function having this parameter. However, if omitting it, you must have selected the instance via `$sinusbot->selectInstance("INSTANCEUUID")` beforehand.
+
+```php
+$sinusbot = new SinusBot("http://127.0.0.1:8087");
 $sinusbot->login($username, $password)
 $sinusbot->getFiles()
 $sinusbot->getRadioStations($search)
@@ -86,4 +93,4 @@ $sinusbot->getBotLog()
 $sinusbot->getThumbnail($thumbnail)
 $sinusbot->isPlaying($instanceUUID)
 $sinusbot->isRunning($instanceUUID)
-</pre>
+```
