@@ -1,4 +1,6 @@
 {
+    "name": "api-php",
+    "description": "PHP Wrapper to communicate with the SinusBot API.",
     "require-dev": {
         "phpdocumentor/phpdocumentor": "2.*"
     }
