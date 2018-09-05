@@ -334,8 +334,16 @@ class SinusBot {
   public function createPlaylist($playlistName) {
     return $this->request('/bot/playlists', 'POST', json_encode(array("name" => $playlistName)));
   }
-  
-  
+
+/**
+ * importPlaylist
+ * @access public
+ * @param  string $url youtube-dl URL
+ * @return array status
+ */
+  public function importPlaylist($url) {
+    return $this->request('/bot/playlists', 'POST', json_encode(array("importFrom" => $url)));
+  }
 /**
   * renamePlaylist
   *
