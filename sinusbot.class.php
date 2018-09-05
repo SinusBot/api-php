@@ -1,30 +1,13 @@
 <?php
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   file                 :  sinusbot.class.php
- *   version              :  0.3
- *   last modified        :  11. October 2017
+ *   version              :  1.0
+ *   last modified        :  05. September 2018
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   author               :  Manuel Hettche
- *   copyright            :  (C) 2015 TS3index.com
+ *   copyright            :  (C) 2018 TS3index.com
  *   email                :  info@ts3index.com
- *   begin                :  25. Juli 2015
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *
- *  This class is a powerful library for querying SinusBot from your website.
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ *   begin                :  25. Juli 2015 *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 class SinusBot {
@@ -33,8 +16,6 @@ class SinusBot {
   public $wiTimeout = NULL;
   public $apiURL = NULL;
   public $botUUID = NULL;
-  public $instanceUUID = NULL;
-
 
 /**
   * login
@@ -144,48 +125,7 @@ class SinusBot {
   }
   
   
-/**
-  * getStatus
-  *
-  * <b>Output:</b><br>
-  * <code>
-  *  Array
-  *  (
-  *      [v] => 0.9.9-b533b94
-  *      [currentTrack] => Array
-  *          (
-  *              [uuid] => 6da519a3-5aa3-4f5e-9e2d-81c88e9159ea
-  *              [parent] => 9ecbe0ed-8963-443a-9e23-4a815aa01dc2
-  *              [type] => url
-  *              [filename] => http://stream01.iloveradio.de/iloveradio1.mp3
-  *              [title] => I Love Radio
-  *              [tempArtist] => MARTIN TUNGEVAAG
-  *              [tempTitle] => WICKED WONDERLAND
-  *          )
-  *      [position] => 204852
-  *      [running] => 1
-  *      [playing] => 1
-  *      [playlist] => 
-  *      [playlistTrack] => -1
-  *      [shuffle] => 
-  *      [repeat] => 
-  *      [volume] => 5
-  *      [needsRestart] => 
-  *      [queueLen] => 0
-  *      [queueVersion] => 0
-  *      [modes] => 1
-  *      [downloaded] => 49804057
-  *  )
-  * </code>
-  *
-  * @access public
-  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
-  * @return array status
-  */
-  public function getStatus($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
-    return $this->request('/bot/i/'.$instanceUUID.'/status');;
-  }
+
   
   
 /**
@@ -244,46 +184,6 @@ class SinusBot {
     return $this->request('/bot/info');
   }
   
-  
-/**
-  * getInstanceLog
-  *
-  * <b>Output:</b><br>
-  * <code>
-  *  Array
-  *  (
-  *      [0] => Array
-  *          (
-  *              [m] => Done playing
-  *              [t] => 1437858096
-  *              [s] => 5
-  *          )
-  *      [1] => Array
-  *          (
-  *              [m] => Playing next from queue: 64c04ea4-f260-4264-9cdc-93ef26b0cffb
-  *              [t] => 1437858097
-  *              [s] => 3
-  *          )
-  *      [2] => Array
-  *          (
-  *              [m] => STOP [admin] OK
-  *              [t] => 1437858193
-  *              [s] => 3
-  *          )
-  *      [...]
-  *  )
-  * </code>
-  *
-  * @access public
-  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
-  * @return array log
-  */
-  public function getInstanceLog($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
-    return $this->request('/bot/i/'.$instanceUUID.'/log');
-  }
-  
-  
 /**
   * getPlaylists
   *
@@ -313,7 +213,6 @@ class SinusBot {
   public function getPlaylists() {
     return $this->request('/bot/playlists');
   }
-  
   
 /**
   * createPlaylist
@@ -889,82 +788,7 @@ class SinusBot {
     return $this->request('/bot/files/'.$trackUUID, 'DELETE');
   }
   
-  
-/**
-  * getVolume
-  *
-  * @access public
-  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
-  * @return integer
-  */
-  public function getVolume($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
-    return $this->getStatus($instanceUUID)['volume'];
-  }
-  
-  
-/**
-  * setVolume
-  *
-  * <b>Output:</b><br>
-  * <code>
-  *  Array
-  *  (
-  *      [success] => 1
-  *  )
-  * </code>
-  *
-  * @access public
-  * @param  string  $volume        {0-100}
-  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
-  * @return array status
-  */
-  public function setVolume($volume = 50, $instanceUUID = NULL) {
-    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
-    return $this->request('/bot/i/'.$instanceUUID.'/volume/set/'.$volume, 'POST', '');
-  }
-  
-  
-/**
-  * setVolumeUp
-  *
-  * <b>Output:</b><br>
-  * <code>
-  *  Array
-  *  (
-  *      [success] => 1
-  *  )
-  * </code>
-  *
-  * @access public
-  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
-  * @return array status
-  */
-  public function setVolumeUp($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
-    return $this->request('/bot/i/'.$instanceUUID.'/volume/up', 'POST', '');
-  }
-  
-  
-/**
-  * setVolumeDown
-  *
-  * <b>Output:</b><br>
-  * <code>
-  *  Array
-  *  (
-  *      [success] => 1
-  *  )
-  * </code>
-  *
-  * @access public
-  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
-  * @return array status
-  */
-  public function setVolumeDown($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
-    return $this->request('/bot/i/'.$instanceUUID.'/volume/down', 'POST', '');
-  }
+
   
   
 /**
@@ -1691,7 +1515,216 @@ class SinusBot {
   }
   
   
+
+  
+  
 /**
+  * getDefaultBot
+  *
+  * <b>Output:</b>
+  * b115f224-0687-492f-a88c-ccd9a6582f441
+  *
+  * @access public
+  * @return string
+  */
+  public function getDefaultBot() {
+    $req = $this->request('/botId'); 
+    return (isset($req['defaultBotId'])) ? $req['defaultBotId'] : NULL;
+  }
+  
+  
+/**
+  * getBotLog
+  *
+  * <b>Output:</b><br>
+  * <code>
+  *  Array
+  *  (
+  *      [0] => Array
+  *          (
+  *              [m] => LOGIN [admin] OK
+  *              [t] => 1437853448
+  *              [s] => 3
+  *          )
+  *      [1] => Array
+  *          (
+  *              [m] => PLAYLIST-ENTRY-ADD [admin] 4e62232e-a025-446b-a781-9563abef628b 2340b137-6e1a-4774-a8a5-60eda927d1f0 OK
+  *              [t] => 1437853448
+  *              [s] => 3
+  *          )
+  *      [2] => Array
+  *          (
+  *              [m] => FILE-DELETE [admin] (011098e6-cece-417e-a38d-297b27598efa) OK
+  *              [t] => 1437860391
+  *              [s] => 3
+  *          )
+  *      [...]
+  *  )
+  * </code>
+  *
+  * @access public
+  * @return array log
+  */
+  public function getBotLog() {
+    return $this->request('/bot/log');
+  }
+  
+  
+/**
+  * getThumbnail
+  *
+  * <b>Output:</b>
+  * http://127.0.0.1:8087/cache/2e507f2190ec65d23a41e0894bf6a2eb0e050283d6cdbdb089f1b7efcef2449e.jpg
+  *
+  * @access public
+  * @param  string  $thumbnail  see getFiles()
+  * @return string  url
+  */
+  public function getThumbnail($thumbnail) {
+    return $this->wiURL.'/cache/'.$thumbnail;
+  }
+  
+  
+
+   
+  
+/**
+  * __construct
+  *
+  * @access private
+  * @param  string  $wiURL    http://127.0.0.1:8087
+  * @param  string  $botUUID  4852efdc-9705-4706-e469-cfvf77favf33
+  * @return void
+  */
+  function __construct($wiURL = 'http://127.0.0.1:8087', $botUUID = NULL, $wiTimeout = 8000) {
+    $this->wiURL = $wiURL;
+    $this->apiURL = $this->wiURL.'/api/v1';
+    $this->wiTimeout = $wiTimeout;
+    $this->botUUID = ($botUUID == NULL) ? $this->getDefaultBot() : $botUUID;
+  }
+   
+  
+/**
+  * request
+  *
+  * @access private
+  * @param  string  $path    /bot/instances
+  * @param  string  $method  GET
+  * @param  string  $method  NULL
+  * @return array
+  */
+  private function request($path, $method = "GET", $fields = NULL) {
+    $ch = curl_init();
+    curl_setopt_array($ch, array(
+        CURLOPT_URL => $this->apiURL.$path,
+        CURLOPT_HTTPHEADER => array(
+            "Accept:application/json, text/plain, */*",
+            "Accept-Encoding:gzip, deflate",
+            "Content-Type:application/json",
+            "Authorization: Bearer ".$this->wiToken
+        ),
+        CURLOPT_CUSTOMREQUEST => $method,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_SSL_VERIFYHOST => false,
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_TIMEOUT_MS => $this->wiTimeout
+    ));
+    if ($fields != NULL) curl_setopt($ch, CURLOPT_POSTFIELDS, $fields); 
+    $data = curl_exec($ch);
+    
+    if ($data === false) {
+      $data = array('success' => false, 'error' => curl_error($ch));
+    } else {
+      $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+      if ($httpcode != 200 AND $httpcode != 201) $data = array('success' => false, 'error' => $this->getError($httpcode));
+    }
+    
+    curl_close($ch);
+    return (is_array($data)) ? $data : json_decode($data, TRUE);
+  }
+  
+  
+/**
+  * getError
+  *
+  * @access private
+  * @param  integer  $code    401
+  * @return string
+  */  
+  private function getError($code = 0) {
+    switch ($code) {
+        case 100: return 'Continue';
+        case 101: return 'Switching Protocols';
+        case 200: return 'OK';
+        case 201: return 'Created';
+        case 202: return 'Accepted';
+        case 203: return 'Non-Authoritative Information';
+        case 204: return 'No Content';
+        case 205: return 'Reset Content';
+        case 206: return 'Partial Content';
+        case 300: return 'Multiple Choices';
+        case 301: return 'Moved Permanently';
+        case 302: return 'Moved Temporarily';
+        case 303: return 'See Other';
+        case 304: return 'Not Modified';
+        case 305: return 'Use Proxy';
+        case 400: return 'Bad Request';
+        case 401: return 'Unauthorized';
+        case 402: return 'Payment Required';
+        case 403: return 'Forbidden';
+        case 404: return 'Not Found';
+        case 405: return 'Method Not Allowed';
+        case 406: return 'Not Acceptable';
+        case 407: return 'Proxy Authentication Required';
+        case 408: return 'Request Time-out';
+        case 409: return 'Conflict';
+        case 410: return 'Gone';
+        case 411: return 'Length Required';
+        case 412: return 'Precondition Failed';
+        case 413: return 'Request Entity Too Large';
+        case 414: return 'Request-URI Too Large';
+        case 415: return 'Unsupported Media Type';
+        case 500: return 'Internal Server Error';
+        case 501: return 'Not Implemented';
+        case 502: return 'Bad Gateway';
+        case 503: return 'Service Unavailable';
+        case 504: return 'Gateway Time-out';
+        case 505: return 'HTTP Version not supported';
+        default: return 'Unknown HTTP status code: ' . $code;
+    }
+  }
+}
+
+class Instance {
+  public $uuid = null;
+  function __construct($uuid) {
+
+  }
+  /**
+  * isPlaying
+  *
+  * @access public
+  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
+  * @return boolean
+  */
+  public function isPlaying($instanceUUID = NULL) {
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return (boolean) $this->getStatus($instanceUUID)['playing'];
+  }
+  
+  
+/**
+  * isRunning
+  *
+  * @access public
+  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
+  * @return boolean
+  */
+  public function isRunning($instanceUUID = NULL) {
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return (boolean) $this->getStatus($instanceUUID)['running'];
+  }
+  /**
   * deleteInstance
   *
   * <b>Output:</b><br>
@@ -1807,25 +1840,126 @@ class SinusBot {
     $tokenRequest = $this->request('/bot/i/'.$instanceUUID.'/streamToken', 'POST', '');
     return (isset($tokenRequest['token'])) ? $tokenRequest['token'] : NULL;
   }
-  
-  
+    
 /**
-  * getDefaultBot
-  *
-  * <b>Output:</b>
-  * b115f224-0687-492f-a88c-ccd9a6582f441
+  * getVolume
   *
   * @access public
-  * @return string
+  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
+  * @return integer
   */
-  public function getDefaultBot() {
-    $botRequest = $this->request('/botId');
-    return (isset($botRequest['defaultBotId'])) ? $botRequest['defaultBotId'] : NULL;
+  public function getVolume($instanceUUID = NULL) {
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->getStatus($instanceUUID)['volume'];
   }
   
   
 /**
-  * getBotLog
+  * setVolume
+  *
+  * <b>Output:</b><br>
+  * <code>
+  *  Array
+  *  (
+  *      [success] => 1
+  *  )
+  * </code>
+  *
+  * @access public
+  * @param  string  $volume        {0-100}
+  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
+  * @return array status
+  */
+  public function setVolume($volume = 50, $instanceUUID = NULL) {
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/volume/set/'.$volume, 'POST', '');
+  }
+  
+  
+/**
+  * setVolumeUp
+  *
+  * <b>Output:</b><br>
+  * <code>
+  *  Array
+  *  (
+  *      [success] => 1
+  *  )
+  * </code>
+  *
+  * @access public
+  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
+  * @return array status
+  */
+  public function setVolumeUp($instanceUUID = NULL) {
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/volume/up', 'POST', '');
+  }
+  
+  
+/**
+  * setVolumeDown
+  *
+  * <b>Output:</b><br>
+  * <code>
+  *  Array
+  *  (
+  *      [success] => 1
+  *  )
+  * </code>
+  *
+  * @access public
+  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
+  * @return array status
+  */
+  public function setVolumeDown($instanceUUID = NULL) {
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/volume/down', 'POST', '');
+  }
+  /**
+  * getStatus
+  *
+  * <b>Output:</b><br>
+  * <code>
+  *  Array
+  *  (
+  *      [v] => 0.9.9-b533b94
+  *      [currentTrack] => Array
+  *          (
+  *              [uuid] => 6da519a3-5aa3-4f5e-9e2d-81c88e9159ea
+  *              [parent] => 9ecbe0ed-8963-443a-9e23-4a815aa01dc2
+  *              [type] => url
+  *              [filename] => http://stream01.iloveradio.de/iloveradio1.mp3
+  *              [title] => I Love Radio
+  *              [tempArtist] => MARTIN TUNGEVAAG
+  *              [tempTitle] => WICKED WONDERLAND
+  *          )
+  *      [position] => 204852
+  *      [running] => 1
+  *      [playing] => 1
+  *      [playlist] => 
+  *      [playlistTrack] => -1
+  *      [shuffle] => 
+  *      [repeat] => 
+  *      [volume] => 5
+  *      [needsRestart] => 
+  *      [queueLen] => 0
+  *      [queueVersion] => 0
+  *      [modes] => 1
+  *      [downloaded] => 49804057
+  *  )
+  * </code>
+  *
+  * @access public
+  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
+  * @return array status
+  */
+  public function getStatus($instanceUUID = NULL) {
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/status');;
+  }
+  /**
+  * getInstanceLog
   *
   * <b>Output:</b><br>
   * <code>
@@ -1833,20 +1967,20 @@ class SinusBot {
   *  (
   *      [0] => Array
   *          (
-  *              [m] => LOGIN [admin] OK
-  *              [t] => 1437853448
-  *              [s] => 3
+  *              [m] => Done playing
+  *              [t] => 1437858096
+  *              [s] => 5
   *          )
   *      [1] => Array
   *          (
-  *              [m] => PLAYLIST-ENTRY-ADD [admin] 4e62232e-a025-446b-a781-9563abef628b 2340b137-6e1a-4774-a8a5-60eda927d1f0 OK
-  *              [t] => 1437853448
+  *              [m] => Playing next from queue: 64c04ea4-f260-4264-9cdc-93ef26b0cffb
+  *              [t] => 1437858097
   *              [s] => 3
   *          )
   *      [2] => Array
   *          (
-  *              [m] => FILE-DELETE [admin] (011098e6-cece-417e-a38d-297b27598efa) OK
-  *              [t] => 1437860391
+  *              [m] => STOP [admin] OK
+  *              [t] => 1437858193
   *              [s] => 3
   *          )
   *      [...]
@@ -1854,185 +1988,11 @@ class SinusBot {
   * </code>
   *
   * @access public
+  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
   * @return array log
   */
-  public function getBotLog() {
-    return $this->request('/bot/log');
-  }
-  
-  
-/**
-  * getThumbnail
-  *
-  * <b>Output:</b>
-  * http://127.0.0.1:8087/cache/2e507f2190ec65d23a41e0894bf6a2eb0e050283d6cdbdb089f1b7efcef2449e.jpg
-  *
-  * @access public
-  * @param  string  $thumbnail  see getFiles()
-  * @return string  url
-  */
-  public function getThumbnail($thumbnail) {
-    return $this->wiURL.'/cache/'.$thumbnail;
-  }
-  
-  
-/**
-  * isPlaying
-  *
-  * @access public
-  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
-  * @return boolean
-  */
-  public function isPlaying($instanceUUID = NULL) {
+  public function getInstanceLog($instanceUUID = NULL) {
     if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
-    return (boolean) $this->getStatus($instanceUUID)['playing'];
-  }
-  
-  
-/**
-  * isRunning
-  *
-  * @access public
-  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
-  * @return boolean
-  */
-  public function isRunning($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
-    return (boolean) $this->getStatus($instanceUUID)['running'];
-  }
-  
-  
-//----------------------------------------------------------------------
-// Internal Functions
-//----------------------------------------------------------------------
-  
-  
-/**
-  * __construct
-  *
-  * @access private
-  * @param  string  $wiURL    http://127.0.0.1:8087
-  * @param  string  $botUUID  4852efdc-9705-4706-e469-cfvf77favf33
-  * @return void
-  */
-  function __construct($wiURL = 'http://127.0.0.1:8087', $botUUID = NULL, $wiTimeout = 8000) {
-    $this->wiURL = $wiURL;
-    $this->apiURL = $this->wiURL.'/api/v1';
-    $this->wiTimeout = $wiTimeout;
-    $this->botUUID = ($botUUID == NULL) ? $this->getDefaultBot() : $botUUID;
-  }
-  
-  
-/**
-  * __destruct
-  * 
-  * @access private
-  * @return void
-  */
-  function __destruct() {
-  }
-  
-  
-/**
-  * __call
-  * 
-  * @access private
-  * @param  string  $name   method name
-  * @param  array   $args   method arguments
-  * @return void
-  */
-  function __call($name, $args) {
-    return 'Method '.$name.' doesn\'t exist';
-  }
-  
-  
-/**
-  * request
-  *
-  * @access private
-  * @param  string  $path    /bot/instances
-  * @param  string  $method  GET
-  * @param  string  $method  NULL
-  * @return array
-  */
-  private function request($path, $method = "GET", $fields = NULL) {
-    $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => $this->apiURL.$path,
-        CURLOPT_HTTPHEADER => array(
-            "Accept:application/json, text/plain, */*",
-            "Accept-Encoding:gzip, deflate",
-            "Content-Type:application/json",
-            "Authorization: Bearer ".$this->wiToken
-        ),
-        CURLOPT_CUSTOMREQUEST => $method,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_SSL_VERIFYHOST => false,
-        CURLOPT_SSL_VERIFYPEER => false,
-        CURLOPT_TIMEOUT_MS => $this->wiTimeout
-    ));
-    if ($fields != NULL) curl_setopt($ch, CURLOPT_POSTFIELDS, $fields); 
-    $data = curl_exec($ch);
-    
-    if ($data === false) {
-      $data = array('success' => false, 'error' => curl_error($ch));
-    } else {
-      $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-      if ($httpcode != 200 AND $httpcode != 201) $data = array('success' => false, 'error' => $this->getError($httpcode));
-    }
-    
-    curl_close($ch);
-    return (is_array($data)) ? $data : json_decode($data, TRUE);
-  }
-  
-  
-/**
-  * getError
-  *
-  * @access private
-  * @param  integer  $code    401
-  * @return string
-  */  
-  private function getError($code = 0) {
-    switch ($code) {
-        case 100: return 'Continue';
-        case 101: return 'Switching Protocols';
-        case 200: return 'OK';
-        case 201: return 'Created';
-        case 202: return 'Accepted';
-        case 203: return 'Non-Authoritative Information';
-        case 204: return 'No Content';
-        case 205: return 'Reset Content';
-        case 206: return 'Partial Content';
-        case 300: return 'Multiple Choices';
-        case 301: return 'Moved Permanently';
-        case 302: return 'Moved Temporarily';
-        case 303: return 'See Other';
-        case 304: return 'Not Modified';
-        case 305: return 'Use Proxy';
-        case 400: return 'Bad Request';
-        case 401: return 'Unauthorized';
-        case 402: return 'Payment Required';
-        case 403: return 'Forbidden';
-        case 404: return 'Not Found';
-        case 405: return 'Method Not Allowed';
-        case 406: return 'Not Acceptable';
-        case 407: return 'Proxy Authentication Required';
-        case 408: return 'Request Time-out';
-        case 409: return 'Conflict';
-        case 410: return 'Gone';
-        case 411: return 'Length Required';
-        case 412: return 'Precondition Failed';
-        case 413: return 'Request Entity Too Large';
-        case 414: return 'Request-URI Too Large';
-        case 415: return 'Unsupported Media Type';
-        case 500: return 'Internal Server Error';
-        case 501: return 'Not Implemented';
-        case 502: return 'Bad Gateway';
-        case 503: return 'Service Unavailable';
-        case 504: return 'Gateway Time-out';
-        case 505: return 'HTTP Version not supported';
-        default: return 'Unknown HTTP status code: ' . $code;
-    }
+    return $this->request('/bot/i/'.$instanceUUID.'/log');
   }
 }
