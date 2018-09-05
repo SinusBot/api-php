@@ -1,5 +1,7 @@
 # SinusBot API PHP-Class
 
+[![Build Status](https://travis-ci.org/SinusBot/api-php.svg?branch=master)](https://travis-ci.org/SinusBot/api-php)
+
 > PHP-Class for the SinusBot (http://sinusbot.com)
 
 You can retrieve information with the PHP-Class. It is now possible to view the current status and the current title of the track or stream on your own homepage via PHP.

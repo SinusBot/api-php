@@ -1,0 +1,16 @@
+language: php
+before_script:
+  - cd $TRAVIS_BUILD_DIR
+  - composer self-update
+  - composer install --no-interaction
+script:
+  - cd $TRAVIS_BUILD_DIR
+  - php vendor/bin/phpdoc -d . -t docs --ignore vendor/,docs/,examples/
+deploy:
+  provider: pages
+  github-token: $GITHUB_TOKEN
+  skip-cleanup: true
+  local-dir: docs
+branches:
+   only:
+   - master
