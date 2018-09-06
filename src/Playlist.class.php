@@ -2,7 +2,7 @@
 
 namespace SinusBot;
 
-class Playlist extends HttpClient
+class Playlist extends RestClient
 {
     public $playlist = null;
     public $uuid = null;

@@ -2,7 +2,7 @@
 
 namespace SinusBot;
 
-class Instance extends HttpClient
+class Instance extends RestClient
 {
     public $uuid = null;
     public $instance = null;

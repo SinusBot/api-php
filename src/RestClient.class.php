@@ -2,7 +2,7 @@
 
 namespace SinusBot;
 
-class HttpClient
+class RestClient
 {
     protected $timeout = null;
     protected $token = null;

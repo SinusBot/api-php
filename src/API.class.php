@@ -12,7 +12,7 @@
 
 namespace SinusBot;
 
-class SinusBot extends HttpClient
+class API extends RestClient
 {
     public $uuid = null;
 
