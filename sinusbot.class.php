@@ -5,7 +5,7 @@
  *   last modified        :  06. September 2018
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   author               :  Manuel Hettche
- *   copyright            :  (C) 2018 TS3index.com
+ *   copyright            :  (C) 2018 SinusBot
  *   email                :  info@ts3index.com
  *   begin                :  25. Juli 2015 *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -149,11 +149,11 @@ class SinusBot extends HttpClient {
   }
   
   /**
-  * getInfos returns the bot infos
+  * getInfo returns the bot infos
   *
   * @return array bot infos
   */
-  public function getInfos() {
+  public function getInfo() {
     return $this->request('/bot/info');
   }
   
@@ -178,9 +178,10 @@ class SinusBot extends HttpClient {
   * @return array status
   */
   public function createPlaylist($playlistName) {
-    return $this->request('/bot/playlists', 'POST', [
+    $resp = $this->request('/bot/playlists', 'POST', [
       "name" => $playlistName,
     ]);
+    return new Playlist($this->token, $this->url, $this->timeout, $resp["uuid"])
   }
 
   /**
