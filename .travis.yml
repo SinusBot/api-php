@@ -6,6 +6,9 @@ before_script:
 script:
   - cd $TRAVIS_BUILD_DIR
   - php vendor/bin/phpdoc -d . -t docs --ignore vendor/,docs/,examples/
+test:
+  - ./vendor/bin/phpcs ./sinusbot.class.php
+  - ./vendor/bin/phpcbf ./sinusbot.class.php
 deploy:
   provider: pages
   github-token: $GITHUB_TOKEN
