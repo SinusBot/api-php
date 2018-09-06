@@ -36,9 +36,13 @@ class SinusBot {
   * @return boolean success
   */
   public function login($username, $password) {
-    $login = $this->request('/bot/login', 'POST', json_encode(array('username' => $username, 'password' => $password, 'botId' => $this->botUUID)));
+    $login = $this->request('/bot/login', 'POST',  [
+      'username' => $username,
+      'password' => $password,
+      'botId' => $this->botUUID,
+      ]);
     if ($login != NULL AND isset($login['token'])) $this->wiToken = $login['token'];
-    return $login;
+    return $login['success'];
   }
   
   
@@ -231,7 +235,9 @@ class SinusBot {
   * @return array status
   */
   public function createPlaylist($playlistName) {
-    return $this->request('/bot/playlists', 'POST', json_encode(array("name" => $playlistName)));
+    return $this->request('/bot/playlists', 'POST', [
+      "name" => $playlistName,
+    ]);
   }
 
 /**
@@ -241,7 +247,9 @@ class SinusBot {
  * @return array status
  */
   public function importPlaylist($url) {
-    return $this->request('/bot/playlists', 'POST', json_encode(array("importFrom" => $url)));
+    return $this->request('/bot/playlists', 'POST', [
+      "importFrom" => $url,
+    ]);
   }
 /**
   * renamePlaylist
@@ -260,7 +268,9 @@ class SinusBot {
   * @return array status
   */
   public function renamePlaylist($playlistName, $playlistUUID) {
-    return $this->request('/bot/playlists/'.$playlistUUID, 'PATCH', json_encode(array("name" => $playlistName)));
+    return $this->request('/bot/playlists/'.$playlistUUID, 'PATCH', [
+      "name" => $playlistName,
+    ]);
   }
   
   
@@ -331,7 +341,9 @@ class SinusBot {
   * @return array status
   */
   public function addPlaylistTrack($trackUUID, $playlistUUID) {
-    return $this->request('/bot/playlists/'.$playlistUUID, 'POST', json_encode(array("uuid" => $trackUUID)));
+    return $this->request('/bot/playlists/'.$playlistUUID, 'POST', [
+      "uuid" => $trackUUID,
+  ]);
   }
   
   
@@ -375,7 +387,10 @@ class SinusBot {
     $currentTracks = $this->getPlaylistTracks($playlistUUID);
     if ($currentTracks == NULL OR !is_array($currentTracks)) return NULL;
     
-    return $this->request('/bot/bulk/playlist/'.$playlistUUID.'/files', 'POST', json_encode(array("op" => "delete", "files" => array_keys($currentTracks['entries']))));
+    return $this->request('/bot/bulk/playlist/'.$playlistUUID.'/files', 'POST', [
+      "op" => "delete",
+      "files" => array_keys($currentTracks['entries']),
+    ]); 
   }
   
   
@@ -468,7 +483,7 @@ class SinusBot {
     if ($currentTracks == NULL OR !is_array($currentTracks)) return NULL;
     unset($currentTracks[$trackPosition]);
     
-    return $this->request('/bot/i/'.$instanceUUID.'/queue', 'PATCH', json_encode(array_values($currentTracks)));
+    return $this->request('/bot/i/'.$instanceUUID.'/queue', 'PATCH', array_values($currentTracks));
   }
   
   
@@ -489,7 +504,7 @@ class SinusBot {
   */
   public function deleteQueueTracks($instanceUUID = NULL) {
     if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
-    return $this->request('/bot/i/'.$instanceUUID.'/queue', 'PATCH', json_encode(array()));
+    return $this->request('/bot/i/'.$instanceUUID.'/queue', 'PATCH', []);
   }
   
   
@@ -512,7 +527,10 @@ class SinusBot {
   */
   public function say($text, $locale, $instanceUUID = NULL) {
     if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
-    return $this->request('/bot/i/'.$instanceUUID.'/say', 'POST', json_encode(array("text" => $text, "locale" => $locale)));
+    return $this->request('/bot/i/'.$instanceUUID.'/say', 'POST', [
+      "text" => $text,
+      "locale" => $locale,
+    ]);
   }
   
   
@@ -742,7 +760,9 @@ class SinusBot {
   * @return array status
   */
   public function moveTrack($trackUUID, $parent = "") {
-    return $this->request('/bot/files/'.$trackUUID, 'PATCH', json_encode(array("parent" => $parent)));
+    return $this->request('/bot/files/'.$trackUUID, 'PATCH', [
+      "parent" => $parent,
+    ]);
   }
   
   
@@ -765,7 +785,12 @@ class SinusBot {
   * @return array status
   */
   public function editTrack($trackUUID, $title, $artist = "", $album = "") {
-    return $this->request('/bot/files/'.$trackUUID, 'PATCH', json_encode(array("displayTitle" => $title, "title" => $title, "artist" => $artist, "album" => $album)));
+    return $this->request('/bot/files/'.$trackUUID, 'PATCH', [
+      "displayTitle" => $title,
+      "title" => $title,
+      "artist" => $artist,
+      "album" => $album,
+    ]);
   }
   
   
@@ -810,7 +835,11 @@ class SinusBot {
   * @return array status
   */
   public function addURL($url, $title, $parent = "") {
-    return $this->request('/bot/url', 'POST', json_encode(array("url" => $url, "title" => $title, "parent" => $parent)));
+    return $this->request('/bot/url', 'POST', [
+      "url" => $url,
+      "title" => $title,
+      "parent" => $parent,
+    ]);
   }
   
   
@@ -832,7 +861,10 @@ class SinusBot {
   * @return array status
   */
   public function addFolder($folderName = "Folder", $parent = "") {
-    return $this->request('/bot/folders', 'POST', json_encode(array("name" => $folderName, "parent" => $parent)));
+    return $this->request('/bot/folders', 'POST', [
+      "name" => $folderName,
+      "parent" => $parent,
+    ]);
   }
   
   
@@ -874,7 +906,11 @@ class SinusBot {
   * @return array status
   */
   public function renameFolder($folderName, $folderUUID) {
-    return $this->request('/bot/files/'.$folderUUID, 'PATCH', json_encode(array("uuid" => $folderUUID, "type" => "folder", "title" => $folderName)));
+    return $this->request('/bot/files/'.$folderUUID, 'PATCH', [
+      "uuid" => $folderUUID,
+      "type" => "folder",
+      "title" => $folderName,
+    ]);
   }
   
   
@@ -949,7 +985,9 @@ class SinusBot {
   * @return array status
   */
   public function addJob($URL) {
-    return $this->request('/bot/jobs', 'POST', json_encode(array('url'=>$URL)));
+    return $this->request('/bot/jobs', 'POST', [
+      'url'=>$URL,
+    ]);
   }
   
   
@@ -1123,7 +1161,11 @@ class SinusBot {
   * @return array status
   */
   public function addUser($username, $password, $privileges = 0) {
-    return $this->request('/bot/users', 'POST', json_encode(array('username'=>$username, 'password'=>$password, 'privileges'=>$privileges)));
+    return $this->request('/bot/users', 'POST', [
+      'username'=>$username,
+      'password'=>$password,
+      'privileges'=>$privileges,
+    ]);
   }
   
   
@@ -1156,7 +1198,9 @@ class SinusBot {
   * @return array status
   */
   public function setUserPassword($password, $userUUID) {
-    return $this->request('/bot/users/'.$userUUID, 'PATCH', json_encode(array('password'=>$password)));
+    return $this->request('/bot/users/'.$userUUID, 'PATCH', [
+      'password'=>$password,
+    ]);
   }
   
   
@@ -1189,7 +1233,9 @@ class SinusBot {
   * @return array status
   */
   public function setUserPrivileges($privileges, $userUUID) {
-    return $this->request('/bot/users/'.$userUUID, 'PATCH', json_encode(array('privileges'=>$privileges)));
+    return $this->request('/bot/users/'.$userUUID, 'PATCH', [
+      'privileges'=>$privileges,
+    ]);
   }
   
   
@@ -1222,7 +1268,9 @@ class SinusBot {
   * @return array status
   */
   public function setUserIdentity($identity, $userUUID) {
-    return $this->request('/bot/users/'.$userUUID, 'PATCH', json_encode(array('tsuid'=>$identity)));
+    return $this->request('/bot/users/'.$userUUID, 'PATCH', [
+      'tsuid'=>$identity,
+    ]);
   }
   
   
@@ -1255,7 +1303,9 @@ class SinusBot {
   * @return array status
   */
   public function setUserServergroup($groupID, $userUUID) {
-    return $this->request('/bot/users/'.$userUUID, 'PATCH', json_encode(array('tsgid'=>$groupID)));
+    return $this->request('/bot/users/'.$userUUID, 'PATCH', [
+      'tsgid'=>$groupID,
+    ]);
   }
   
   
@@ -1276,169 +1326,6 @@ class SinusBot {
   */
   public function deleteUser($userUUID) {
     return $this->request('/bot/users/'.$userUUID, 'DELETE');
-  }
-  
-  
-/**
-  * getSettings
-  *
-  * <b>Output:</b><br>
-  * <code>
-  *  Array
-  *  (
-  *      [name] => 
-  *      [nick] => TS3index.com MusicBot 1
-  *      [mode] => 0
-  *      [serverHost] => ts3index.com
-  *      [serverPort] => 9987
-  *      [serverPassword] => 
-  *      [channelName] => 4832
-  *      [channelPassword] => 
-  *      [updateDescription] => 
-  *      [announce] => 1
-  *      [announceString] => 
-  *      [identity] => 40VFvxDQfcVPEUPy+keaN2ejZ6iNmFdLVlnVmAjRSZZcAUqTkZ4AF[...]
-  *      [identityLevel] => 8
-  *      [enableDucking] => 1
-  *      [duckingVolume] => 50
-  *      [channelCommander] => 1
-  *      [stickToChannel] => 
-  *      [ttsExternalURL] => http://translate.google.com/translate_tts?tl=__LOCALE&q=__TEXT
-  *      [ttsDefaultLocale] => de
-  *      [ignoreChatServer] => 
-  *      [ignoreChatPrivate] => 
-  *      [ignoreChatChannel] => 
-  *      [idleTrack] => 
-  *      [startupTrack] => 
-  *      [script] => 
-  *  )
-  * </code>
-  *
-  * @access public
-  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
-  * @return array users
-  */
-  public function getSettings($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
-    return $this->request('/bot/i/'.$instanceUUID.'/settings');
-  }
-  
-  
-/**
-  * editSettings
-  *
-  * <b>Input:</b><br>
-  * <code>
-  * $data = array();
-  * 
-  * $data['nick'] = 'New Nickname';
-  * $data['serverHost'] = '127.0.0.1';
-  * $data['serverPort'] = 9987;
-  * </code>
-  *
-  * <b>Output:</b><br>
-  * <code>
-  *  Array
-  *  (
-  *      [success] => 1
-  *  )
-  * </code>
-  *
-  * @access public
-  * @param  array   $data          Properties-Array
-  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
-  * @return array status
-  */
-  public function editSettings($data, $instanceUUID = NULL) {
-    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
-    return $this->request('/bot/i/'.$instanceUUID.'/settings', 'POST', json_encode($data));
-  }
-  
-  
-/**
-  * getChannels
-  *
-  * <b>Output:</b><br>
-  * <code>
-  *  Array
-  *  (
-  *      [0] => Array
-  *          (
-  *              [id] => 4834
-  *              [name] => Lobby
-  *              [topic] => 
-  *              [parent] => 0
-  *              [codec] => 4
-  *              [quality] => 10
-  *              [maxClients] => -1
-  *              [order] => 0
-  *              [perm] => 1
-  *              [sperm] => 0
-  *              [default] => 0
-  *              [pw] => 0
-  *              [enc] => 1
-  *              [clients] => Array
-  *                  (
-  *                  )
-  *          )
-  *      [1] => Array
-  *          (
-  *              [id] => 4833
-  *              [name] => Support
-  *              [topic] => 
-  *              [parent] => 0
-  *              [codec] => 4
-  *              [quality] => 6
-  *              [maxClients] => -1
-  *              [order] => 5105
-  *              [perm] => 1
-  *              [sperm] => 0
-  *              [default] => 0
-  *              [pw] => 0
-  *              [enc] => 1
-  *              [clients] => Array
-  *                  (
-  *                      [0] => Array
-  *                          (
-  *                              [id] => 39
-  *                              [uid] => Zzbfw9S5ttDeAThBhop6TlwCaRo=
-  *                              [g] => Array
-  *                                  (
-  *                                      [0] => Array
-  *                                          (
-  *                                              [i] => 240
-  *                                              [n] => Server Admin
-  *                                          )
-  *                                      [1] => Array
-  *                                          (
-  *                                              [i] => 341
-  *                                              [n] => Support
-  *                                          )
-  *                                      [...]
-  *                                  )
-  *                              [nick] => TS3index.com | Manuel
-  *                              [idle] => 24270370
-  *                              [recording] => 0
-  *                              [outputMuted] => 0
-  *                              [outputOnlyMuted] => 0
-  *                              [inputMuted] => 0
-  *                              [away] => 0
-  *                              [ko] => 0
-  *                          )
-  *                      [...]
-  *                  )
-  *          )
-  *      [...]
-  *  )
-  * </code>
-  *
-  * @access public
-  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
-  * @return array channels
-  */
-  public function getChannels($instanceUUID = NULL) {
-    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
-    return $this->request('/bot/i/'.$instanceUUID.'/channels');
   }
   
   
@@ -1510,8 +1397,11 @@ class SinusBot {
   * @param  string  $nickname  Nickname
   * @return array status
   */
-  public function createInstance($nickname = "TS3index.com MusicBot", $backend = "ts3") {
-    return $this->request('/bot/instances', 'POST', json_encode(array("backend" => $backend, "nick" => $nickname)));
+  public function createInstance($nickname = "SinusBot MusicBot", $backend = "ts3") {
+    return $this->request('/bot/instances', 'POST', [
+      "backend" => $backend,
+      "nick" => $nickname,
+    ]);
   }
   
   
@@ -1613,7 +1503,7 @@ class SinusBot {
   * @param  string  $method  NULL
   * @return array
   */
-  private function request($path, $method = "GET", $fields = NULL) {
+  private function request($path, $method = "GET", $payload = NULL, $encoded = FALSE) {
     $ch = curl_init();
     curl_setopt_array($ch, array(
         CURLOPT_URL => $this->apiURL.$path,
@@ -1628,7 +1518,13 @@ class SinusBot {
         CURLOPT_SSL_VERIFYPEER => false,
         CURLOPT_TIMEOUT_MS => $this->wiTimeout
     ));
-    if ($fields != NULL) curl_setopt($ch, CURLOPT_POSTFIELDS, $fields); 
+    if ($payload != NULL) {
+      if ($encoded) {
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+      } else {
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+      }
+    } 
     $data = curl_exec($ch);
     
     if ($data === false) {
@@ -1993,5 +1889,166 @@ class Instance {
   public function getInstanceLog($instanceUUID = NULL) {
     if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
     return $this->request('/bot/i/'.$instanceUUID.'/log');
+  }
+  /**
+  * getSettings
+  *
+  * <b>Output:</b><br>
+  * <code>
+  *  Array
+  *  (
+  *      [name] => 
+  *      [nick] => TS3index.com MusicBot 1
+  *      [mode] => 0
+  *      [serverHost] => ts3index.com
+  *      [serverPort] => 9987
+  *      [serverPassword] => 
+  *      [channelName] => 4832
+  *      [channelPassword] => 
+  *      [updateDescription] => 
+  *      [announce] => 1
+  *      [announceString] => 
+  *      [identity] => 40VFvxDQfcVPEUPy+keaN2ejZ6iNmFdLVlnVmAjRSZZcAUqTkZ4AF[...]
+  *      [identityLevel] => 8
+  *      [enableDucking] => 1
+  *      [duckingVolume] => 50
+  *      [channelCommander] => 1
+  *      [stickToChannel] => 
+  *      [ttsExternalURL] => http://translate.google.com/translate_tts?tl=__LOCALE&q=__TEXT
+  *      [ttsDefaultLocale] => de
+  *      [ignoreChatServer] => 
+  *      [ignoreChatPrivate] => 
+  *      [ignoreChatChannel] => 
+  *      [idleTrack] => 
+  *      [startupTrack] => 
+  *      [script] => 
+  *  )
+  * </code>
+  *
+  * @access public
+  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
+  * @return array users
+  */
+  public function getSettings($instanceUUID = NULL) {
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/settings');
+  }
+  
+  
+/**
+  * editSettings
+  *
+  * <b>Input:</b><br>
+  * <code>
+  * $data = array();
+  * 
+  * $data['nick'] = 'New Nickname';
+  * $data['serverHost'] = '127.0.0.1';
+  * $data['serverPort'] = 9987;
+  * </code>
+  *
+  * <b>Output:</b><br>
+  * <code>
+  *  Array
+  *  (
+  *      [success] => 1
+  *  )
+  * </code>
+  *
+  * @access public
+  * @param  array   $data          Properties-Array
+  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
+  * @return array status
+  */
+  public function editSettings($data, $instanceUUID = NULL) {
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/settings', 'POST', $data);
+  }
+  
+  
+/**
+  * getChannels
+  *
+  * <b>Output:</b><br>
+  * <code>
+  *  Array
+  *  (
+  *      [0] => Array
+  *          (
+  *              [id] => 4834
+  *              [name] => Lobby
+  *              [topic] => 
+  *              [parent] => 0
+  *              [codec] => 4
+  *              [quality] => 10
+  *              [maxClients] => -1
+  *              [order] => 0
+  *              [perm] => 1
+  *              [sperm] => 0
+  *              [default] => 0
+  *              [pw] => 0
+  *              [enc] => 1
+  *              [clients] => Array
+  *                  (
+  *                  )
+  *          )
+  *      [1] => Array
+  *          (
+  *              [id] => 4833
+  *              [name] => Support
+  *              [topic] => 
+  *              [parent] => 0
+  *              [codec] => 4
+  *              [quality] => 6
+  *              [maxClients] => -1
+  *              [order] => 5105
+  *              [perm] => 1
+  *              [sperm] => 0
+  *              [default] => 0
+  *              [pw] => 0
+  *              [enc] => 1
+  *              [clients] => Array
+  *                  (
+  *                      [0] => Array
+  *                          (
+  *                              [id] => 39
+  *                              [uid] => Zzbfw9S5ttDeAThBhop6TlwCaRo=
+  *                              [g] => Array
+  *                                  (
+  *                                      [0] => Array
+  *                                          (
+  *                                              [i] => 240
+  *                                              [n] => Server Admin
+  *                                          )
+  *                                      [1] => Array
+  *                                          (
+  *                                              [i] => 341
+  *                                              [n] => Support
+  *                                          )
+  *                                      [...]
+  *                                  )
+  *                              [nick] => TS3index.com | Manuel
+  *                              [idle] => 24270370
+  *                              [recording] => 0
+  *                              [outputMuted] => 0
+  *                              [outputOnlyMuted] => 0
+  *                              [inputMuted] => 0
+  *                              [away] => 0
+  *                              [ko] => 0
+  *                          )
+  *                      [...]
+  *                  )
+  *          )
+  *      [...]
+  *  )
+  * </code>
+  *
+  * @access public
+  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
+  * @return array channels
+  */
+  public function getChannels($instanceUUID = NULL) {
+    if ($instanceUUID == NULL) $instanceUUID = $this->instanceUUID;
+    return $this->request('/bot/i/'.$instanceUUID.'/channels');
   }
 }
