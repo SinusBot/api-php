@@ -1,6 +1,6 @@
 <?php
 
-include_once("../src/SinusBot.class.php");
+include_once("../src/autoload.php");
 
 use SinusBot\SinusBot;
 

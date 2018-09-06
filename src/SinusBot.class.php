@@ -12,10 +12,6 @@
 
 namespace SinusBot;
 
-require_once("HttpClient.class.php");
-require_once("Instance.class.php");
-require_once("Playlist.class.php");
-
 class SinusBot extends HttpClient
 {
     public $uuid = null;
