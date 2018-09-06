@@ -1619,7 +1619,6 @@ class SinusBot {
         CURLOPT_URL => $this->apiURL.$path,
         CURLOPT_HTTPHEADER => array(
             "Accept:application/json, text/plain, */*",
-            "Accept-Encoding:gzip, deflate",
             "Content-Type:application/json",
             "Authorization: Bearer ".$this->wiToken
         ),
