@@ -5,10 +5,10 @@ before_script:
   - composer install --no-interaction
 script:
   - cd $TRAVIS_BUILD_DIR
-  - php vendor/bin/phpdoc -d . -t docs --ignore vendor/,docs/,examples/
-test:
   - ./vendor/bin/phpcs ./sinusbot.class.php
   - ./vendor/bin/phpcbf ./sinusbot.class.php
+  - php vendor/bin/phpdoc -d . -t docs --ignore vendor/,docs/,examples/
+
 deploy:
   provider: pages
   github-token: $GITHUB_TOKEN
