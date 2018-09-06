@@ -1,5 +1,7 @@
 <?php
 
+namespace SinusBot;
+
 class HttpClient
 {
     protected $timeout = null;

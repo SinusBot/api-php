@@ -1,5 +1,7 @@
 <?php
 
+namespace SinusBot;
+
 class Playlist extends HttpClient
 {
     public $playlist = null;

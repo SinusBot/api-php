@@ -12,6 +12,10 @@
 
 namespace SinusBot;
 
+require_once("HttpClient.class.php");
+require_once("Instance.class.php");
+require_once("Playlist.class.php");
+
 class SinusBot extends HttpClient
 {
     public $uuid = null;
@@ -93,7 +97,7 @@ class SinusBot extends HttpClient
         $resp = $this->request('/bot/playlists', 'POST', [
         "name" => $playlistName,
         ]);
-        return new Playlist($this->token, $this->url, $this->timeout, $resp["uuid"])
+        return new Playlist($this->token, $this->url, $this->timeout, $resp["uuid"]);
     }
 
   /**
@@ -459,7 +463,7 @@ class SinusBot extends HttpClient
   * @param  string  $uuid  4852efdc-9705-4706-e469-cfvf77favf33
   * @return void
   */
-    public public function __construct($url = 'http://127.0.0.1:8087', $uuid = null, $timeout = 8000)
+    public function __construct($url = 'http://127.0.0.1:8087', $uuid = null, $timeout = 8000)
     {
         $this->url = $url;
         $this->timeout = $timeout;

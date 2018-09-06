@@ -1,5 +1,7 @@
 <?php
 
+namespace SinusBot;
+
 class Instance extends HttpClient
 {
     public $uuid = null;
@@ -193,13 +195,13 @@ class Instance extends HttpClient
     }
   
   /**
-  * editSettings
+  * setSettings
   *
   * @param array $data array of properties
   * @return array status
   * @api
   */
-    public function editSettings($data)
+    public function setSettings($data)
     {
         return $this->request('/bot/i/'.$this->uuid.'/settings', 'POST', $data);
     }
