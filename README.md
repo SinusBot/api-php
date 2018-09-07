@@ -4,6 +4,32 @@
 
 > PHP Wrapper to communicate with the [SinusBot](https://sinusbot.com) API.
 
+## Usage
+
+### via Composer
+
+```bash
+composer require sinusbot/sinusbot-api-php
+```
+
+Require the composer's `autoload.php` in the top of your `php` file:
+
+```php
+require __DIR__ . '/vendor/autoload.php';
+```
+
+Then you can use the SinusBot API via the `SinusBot\API` class. 
+
+### via Source
+
+Download or clone this repository to your disk. After that require the autoload.php:
+
+```php
+require __DIR__ . '/../src/autoload.php';
+```
+
+Then you can use the SinusBot API via the `SinusBot\API` class.
+
 ## Examples
 
 There are a few examples located in the [examples](examples/) directory.
