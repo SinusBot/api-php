@@ -8,7 +8,7 @@
  * @author       Max Schmitt <max@schmitt.mx>
  */
 
-include_once("RestClient.class.php");
-include_once("Instance.class.php");
-include_once("Playlist.class.php");
-include_once("API.class.php");
+include_once("RestClient.php");
+include_once("Instance.php");
+include_once("Playlist.php");
+include_once("API.php");
