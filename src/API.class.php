@@ -27,10 +27,12 @@ class API extends RestClient
   *
   * @param string $username SinusBot username
   * @param string $password SinusBot password
+  * @param string $uuid     SinusBot Bot UUID
   * @return boolean success
   */
-    public function login($username, $password)
+    public function login($username, $password, $uuid = null)
     {
+        $this->uuid = !$uuid?$this->getDefaultBot():$uuid;
         $login = $this->request('/bot/login', 'POST', [
         'username' => $username,
         'password' => $password,
@@ -456,14 +458,12 @@ class API extends RestClient
   * __construct
   *
   * @param  string  $url      SinusBot Bot URL
-  * @param  string  $uuid     SinusBot Bot UUID
   * @param  string  $timeout  HTTP Timeout which is used to perform HTTP API requests
   * @return void
   */
-    public function __construct($url = 'http://127.0.0.1:8087', $uuid = null, $timeout = 8000)
+    public function __construct($url = 'http://127.0.0.1:8087', $timeout = 8000)
     {
         $this->url = $url;
         $this->timeout = $timeout;
-        $this->uuid = ($uuid == null) ? $this->getDefaultBot() : $uuid;
     }
 }
