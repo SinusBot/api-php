@@ -23,6 +23,11 @@ class Instance extends RestClient
   */
     public $uuid = null;
   /**
+  * Instance stores the initial received instance data
+  * @var array
+  */
+  private $instance = null;
+  /**
   * __construct
   *
   * @param  string  $token    SinusBot auth token
@@ -31,35 +36,78 @@ class Instance extends RestClient
   * @param  array   $instance SinusBot Instance array.
   * @return void
   */
-    public function __construct($token, $url, $timeout, $uuid)
+    public function __construct($token, $url, $timeout, $instance)
     {
         $this->token = $token;
         $this->url = $url;
         $this->timeout = $timeout;
-        $this->uuid = $uuid;
+        $this->uuid = $instance['uuid'];
+        $this->instance = $instance;
     }
   /**
   * isPlaying returns true when the instance is playing something
   *
-  * @param  string  $instanceUUID  UUID of the SinusBot instance
   * @return boolean
   */
     public function isPlaying()
     {
-        return $this->getStatus()['playing'];
+        return $this->instance['playing'];
     }
   
   /**
   * isRunning returns true when the instance is running
   *
-  * @param  string  $instanceUUID  UUID of the SinusBot instance
   * @return boolean
   */
     public function isRunning()
     {
-        return $this->getStatus()['running'];
+        return $this->instance['running'];
     }
-
+  /**
+  * getBackend returns the SinusBot backend (Discord, TS³)
+  *
+  * @return string instance backend
+  */
+  public function getBackend()
+  {
+      return $this->instance['backend'];
+  }
+  /**
+  * getNick returns the Bot's nickname
+  *
+  * @return string nick
+  */
+  public function getNick()
+  {
+      return $this->instance['nick'];
+  }
+  /**
+  * getName returns the Bot's name
+  *
+  * @return string name
+  */
+  public function getName()
+  {
+      return $this->instance['name'];
+  }
+  /**
+  * getServerHost returns the Bot's server host
+  *
+  * @return string host
+  */
+  public function getServerHost()
+  {
+      return $this->instance['serverHost'];
+  }
+  /**
+  * getServerPort returns the Bot's server port
+  *
+  * @return string port
+  */
+  public function getServerPort()
+  {
+      return $this->instance['serverPort'];
+  }
   /**
   * delete deletes the instance
   *

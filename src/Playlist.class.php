@@ -23,6 +23,11 @@ class Playlist extends RestClient
   */
     public $uuid = null;
   /**
+  * Playlist stores the initial received playlist data
+  * @var array
+  */
+  private $playlist = null;
+  /**
   * __construct
   *
   * @param  string  $token    SinusBot auth token
@@ -31,12 +36,13 @@ class Playlist extends RestClient
   * @param  array   $playlist SinusBot Playlist array.
   * @return void
   */
-    public function __construct($token, $url, $timeout, $uuid)
+    public function __construct($token, $url, $timeout, $playlist)
     {
         $this->token = $token;
         $this->url = $url;
         $this->timeout = $timeout;
-        $this->uuid = $uuid;
+        $this->uuid = $playlist['uuid'];
+        $this->playlist = $playlist;
     }
   
   /**
@@ -60,8 +66,35 @@ class Playlist extends RestClient
     {
         return $this->request('/bot/playlists/'.$this->uuid);
     }
+  /**
+  * getName returns the name of the playlist
+  *
+  * @return string name
+  */
+  public function getName()
+  {
+      return array_key_exists('name', $this->playlist)?$this->playlist['name']:'';
+  }
+  /**
+  * getEntries returns the track entries
+  *
+  * @return array track entries
+  */
+  public function getEntries()
+  {
+      return array_key_exists('entries', $this->playlist)?$this->playlist['entries']:'';
+  }
+  /**
+  * getSource returns the source of the playlist
+  *
+  * @return string source
+  */
+  public function getSource()
+  {
+      return array_key_exists('source', $this->playlist)?$this->playlist['source']:'';
+  }
   
-/**
+ /**
   * addPlaylistTrack adds a track to the playlist
   *
   * @param string $trackUUID uuid of the track
