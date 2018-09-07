@@ -1,9 +1,16 @@
 <?php
-include("sinusbot.class.php");
-$sinusbot = new SinusBot("http://127.0.0.1:8087");
+
+include_once("../src/autoload.php");
+
+$sinusbot = new SinusBot\API("http://127.0.0.1:8087");
 $sinusbot->login("admin", "foobar");
 
-$daten = array();
-$daten["nick"] = "Neuer Nickname";
-$sinusbot->editSettings($daten, "6421eedc-9705-4706-a269-cf6f38fa1a33");
-?>
+$instances = $sinusbot->getInstances();
+
+$instance = $instances[0];
+
+$settings = $instance->getSettings();
+
+$settings["name"] = $settings["nick"]." changed by php";
+
+$instance->setSettings($settings);
