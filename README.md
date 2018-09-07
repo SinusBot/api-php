@@ -22,10 +22,10 @@ Then you can use the SinusBot API via the `SinusBot\API` class.
 
 ### via Source
 
-Download or clone this repository to your disk. After that require the autoload.php:
+Download and extract the latest release [here](https://github.com/SinusBot/api-php/releases/latest). Rename the folder to `sinusbot`, after that require the `autoload.php`:
 
 ```php
-require __DIR__ . '/../src/autoload.php';
+require __DIR__ . '/sinusbot/src/autoload.php';
 ```
 
 Then you can use the SinusBot API via the `SinusBot\API` class.
