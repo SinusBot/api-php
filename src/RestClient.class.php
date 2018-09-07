@@ -25,12 +25,12 @@ class RestClient
   /**
   * Token is the SinusBot auth token which will be there temporary stored.
   * @var string
-  */    
+  */
     protected $token = null;
   /**
   * URL is the SinusBot URL with the port and the HTTP protocol
   * @var string
-  */   
+  */
     protected $url = null;
   /**
   * request executes a request to the SinusBot API

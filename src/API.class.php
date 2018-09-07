@@ -22,9 +22,8 @@ class API extends RestClient
   * @var string
   */
     public $uuid = null;
-
   /**
-  * login logs in to the SinusBot and fetches the token
+  * login logs on to the SinusBot and retrieves the token
   *
   * @param string $username SinusBot username
   * @param string $password SinusBot password
@@ -56,8 +55,8 @@ class API extends RestClient
   /**
   * getRadioStations returns the imported radio stations
   *
-  * @param string $search optional name of the radio station
-  * @return array stations
+  * @param string $search optional name of the search query
+  * @return array radio stations
   */
     public function getRadioStations($search = "")
     {
@@ -196,7 +195,7 @@ class API extends RestClient
   * moveFolder
   *
   * @param string $folderUUID folder uuid
-  * @param string $parent subfolder UUID, empty value = mainfolder
+  * @param string $parent subfolder UUID, empty value means root folder
   * @return array status
   */
     public function moveFolder($folderUUID, $parent = "")
@@ -207,7 +206,7 @@ class API extends RestClient
   /**
   * renameFolder
   *
-  * @param string $folderName Folder
+  * @param string $folderName Folder name
   * @param string $folderUUID uuid of the folder
   * @return array status
   */
@@ -245,7 +244,7 @@ class API extends RestClient
   /**
   * addJob
   *
-  * @param  string  $URL  {YouTube-URL,SoundCloud-URL,Directfile}
+  * @param  string  $URL  {YouTube-URL, SoundCloud-URL, Directfile}
   * @return array status
   */
     public function addJob($URL)
@@ -267,7 +266,6 @@ class API extends RestClient
         return $this->request('/bot/jobs/'.$jobUUID, 'DELETE');
     }
   
-  
   /**
   * deleteFinishedJobs
   *
@@ -277,7 +275,6 @@ class API extends RestClient
     {
         return $this->request('/bot/jobs', 'DELETE');
     }
-  
   
   /**
   * uploadTrack
@@ -290,8 +287,6 @@ class API extends RestClient
         return $this->request('/bot/upload', 'POST', file_get_contents($path));
     }
   
-  
-  
   /**
   * getUsers
   *
@@ -301,7 +296,6 @@ class API extends RestClient
     {
         return $this->request('/bot/users');
     }
-  
   
   /**
   * addUser
@@ -320,12 +314,11 @@ class API extends RestClient
         ]);
     }
   
-  
   /**
   * setUserPassword
   *
   * @param  string   $password  Password
-  * @param  string   $userUUID  65f7473e-f820-4114-b3df-1a48adc74aeb
+  * @param  string   $userUUID  user uuid
   * @return array status
   */
     public function setUserPassword($password, $userUUID)
@@ -340,8 +333,8 @@ class API extends RestClient
   * setUserPrivileges
   *
   * @param integer $privileges Bitmask-Value
-  * @param string $userUUID 65f7473e-f820-4114-b3df-1a48adc74aeb
-  * @return array status
+  * @param string  $userUUID user UUID
+  * @return array  status
   */
     public function setUserPrivileges($privileges, $userUUID)
     {
@@ -353,8 +346,8 @@ class API extends RestClient
   /**
   * setUserIdentity
   *
-  * @param string $identity Zzbfw9S5ttDeAThBhop6TlwCaRo=
-  * @param string $userUUID 65f7473e-f820-4114-b3df-1a48adc74aeb
+  * @param string $identity teamspeak identity
+  * @param string $userUUID SinusBot user UUID
   * @return array status
   */
     public function setUserIdentity($identity, $userUUID)
@@ -368,8 +361,8 @@ class API extends RestClient
   /**
   * setUserServergroup
   *
-  * @param  string   $groupID   6
-  * @param  string   $userUUID  65f7473e-f820-4114-b3df-1a48adc74aeb
+  * @param  string   $groupID   TeamSpeak Group ID
+  * @param  string   $userUUID  SinusBot User UUID
   * @return array status
   */
     public function setUserServergroup($groupID, $userUUID)
@@ -383,7 +376,7 @@ class API extends RestClient
   /**
   * deleteUser
   *
-  * @param  string  $userUUID  65f7473e-f820-4114-b3df-1a48adc74aeb
+  * @param  string  $userUUID SinusBot User UUID
   * @return array status
   */
     public function deleteUser($userUUID)
