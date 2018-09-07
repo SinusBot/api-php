@@ -23,11 +23,6 @@ class Instance extends RestClient
   */
     public $uuid = null;
   /**
-  * Instance holds the Instance array
-  * @var array
-  */
-    public $instance = null;
-  /**
   * __construct
   *
   * @param  string  $token    SinusBot auth token
@@ -36,13 +31,12 @@ class Instance extends RestClient
   * @param  array   $instance SinusBot Instance array.
   * @return void
   */
-    public function __construct($token, $url, $timeout, $instance)
+    public function __construct($token, $url, $timeout, $uuid)
     {
         $this->token = $token;
         $this->url = $url;
         $this->timeout = $timeout;
-        $this->instance = $instance;
-        $this->uuid = $instance["uuid"];
+        $this->uuid = $uuid;
     }
   /**
   * isPlaying returns true when the instance is playing something
@@ -78,7 +72,7 @@ class Instance extends RestClient
   
   
   /**
-  * spawn starts the instance
+  * spawn spawns the instance
   *
   * @return array status
   */
@@ -391,8 +385,7 @@ class Instance extends RestClient
         return $this->request('/bot/i/'.$this->uuid.'/playPrevious', 'POST', '');
     }
   
-  
-/**
+  /**
   * playNext will play the next track
   *
   * @return array status
@@ -426,7 +419,7 @@ class Instance extends RestClient
   
   
 /**
-  * stop stops the instance
+  * stop stops the playback
   *
   * @return array status
   */

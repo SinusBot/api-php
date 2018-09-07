@@ -85,7 +85,7 @@ class API extends RestClient
         $playlists = $this->request('/bot/playlists');
         $out = [];
         foreach ($playlists as $playlist) {
-            array_push($out, new Playlist($this->token, $this->url, $this->timeout, $playlist));
+            array_push($out, new Playlist($this->token, $this->url, $this->timeout, $playlist["uuid"]));
         }
         return $out;
     }
@@ -398,7 +398,7 @@ class API extends RestClient
         $instances =  $this->request('/bot/instances');
         $out = [];
         foreach ($instances as $instance) {
-            array_push($out, new Instance($this->token, $this->url, $this->timeout, $instance));
+            array_push($out, new Instance($this->token, $this->url, $this->timeout, $instance["uuid"]));
         }
         return $out;
     }

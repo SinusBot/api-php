@@ -18,11 +18,6 @@ namespace SinusBot;
 class Playlist extends RestClient
 {
   /**
-  * Playlist holds the Playlist array
-  * @var array
-  */
-    public $playlist = null;
-  /**
   * UUID holds the Playlist UUID
   * @var array
   */
@@ -36,13 +31,12 @@ class Playlist extends RestClient
   * @param  array   $playlist SinusBot Playlist array.
   * @return void
   */
-    public function __construct($token, $url, $timeout, $playlist)
+    public function __construct($token, $url, $timeout, $uuid)
     {
         $this->token = $token;
         $this->url = $url;
         $this->timeout = $timeout;
-        $this->playlist = $playlist;
-        $this->uuid = $playlist["uuid"];
+        $this->uuid = $uuid;
     }
   
   /**
