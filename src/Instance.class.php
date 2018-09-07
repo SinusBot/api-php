@@ -1,4 +1,12 @@
 <?php
+/**
+ * Class Instance | src/Instance.class.php
+ *
+ * A single Instance with his available actions
+ *
+ * @package      SinusBot
+ * @author       Max Schmitt <max@schmitt.mx>
+ */
 
 namespace SinusBot;
 

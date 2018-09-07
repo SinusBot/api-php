@@ -1,4 +1,12 @@
 <?php
+/**
+ * Class RestClient | src/RestClient.class.php
+ *
+ * RestClient is used to perform the http requests
+ *
+ * @package      SinusBot
+ * @author       Max Schmitt <max@schmitt.mx>
+ */
 
 namespace SinusBot;
 

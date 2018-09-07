@@ -1,4 +1,12 @@
 <?php
+/**
+ * Class Playlist | src/Playlist.class.php
+ *
+ * A single Playlist with his available actions
+ *
+ * @package      SinusBot
+ * @author       Max Schmitt <max@schmitt.mx>
+ */
 
 namespace SinusBot;
 

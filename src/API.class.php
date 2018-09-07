@@ -1,14 +1,12 @@
 <?php
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   file                 :  sinusbot.class.php
- *   version              :  1.0
- *   last modified        :  06. September 2018
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   author               :  Manuel Hettche
- *   copyright            :  (C) 2018 SinusBot
- *   email                :  info@ts3index.com
- *   begin                :  25. Juli 2015 *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/**
+ * Class API | src/API.class.php
+ *
+ * Main class which will be used to connect to the SinusBot
+ *
+ * @package      SinusBot
+ * @author       Max Schmitt <max@schmitt.mx>
+ */
 
 namespace SinusBot;
 
