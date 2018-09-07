@@ -45,9 +45,9 @@ class Instance extends RestClient
         $this->uuid = $instance["uuid"];
     }
   /**
-  * isPlaying
+  * isPlaying returns true when the instance is playing something
   *
-  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
+  * @param  string  $instanceUUID  UUID of the SinusBot instance
   * @return boolean
   */
     public function isPlaying()
@@ -56,9 +56,9 @@ class Instance extends RestClient
     }
   
   /**
-  * isRunning
+  * isRunning returns true when the instance is running
   *
-  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
+  * @param  string  $instanceUUID  UUID of the SinusBot instance
   * @return boolean
   */
     public function isRunning()
@@ -67,7 +67,7 @@ class Instance extends RestClient
     }
 
   /**
-  * deleteInstance
+  * delete deletes the instance 
   *
   * @return array status
   */
@@ -78,7 +78,7 @@ class Instance extends RestClient
   
   
   /**
-  * spawnInstance
+  * spawn starts the instance
   *
   * @return array status
   */
@@ -88,7 +88,7 @@ class Instance extends RestClient
     }
   
   /**
-  * respawnInstance
+  * respawn restarts the instance
   *
   * @return array status
   */
@@ -98,9 +98,9 @@ class Instance extends RestClient
     }
   
   /**
-  * killInstance
+  * kill kills the instance
   *
-  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
+  * @param  string  $instanceUUID  UUID of the SinusBot instance
   * @return array status
   */
     public function kill()
@@ -109,11 +109,11 @@ class Instance extends RestClient
     }
   
   /**
-  * getWebStream
+  * getWebStream returns the webstream URL of the instance
   *
   * requires: EnableWebStream = true
   *
-  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
+  * @param  string  $instanceUUID  UUID of the SinusBot instance
   * @return string  url (opus-encoded-ogg-stream)
   * @api
   */
@@ -128,11 +128,11 @@ class Instance extends RestClient
     }
   
   /**
-  * getWebStreamToken
+  * getWebStreamToken returns the webstream token
   *
   * requires: EnableWebStream = true
   *
-  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
+  * @param  string  $instanceUUID  UUID of the SinusBot instance
   * @return string  token
   * @api
   */
@@ -143,7 +143,7 @@ class Instance extends RestClient
     }
     
   /**
-  * getVolume
+  * getVolume returns the current volume
   *
   * @return integer
   * @api
@@ -155,7 +155,7 @@ class Instance extends RestClient
   
   
   /**
-  * setVolume
+  * setVolume sets the volume to a given one
   *
   * @param  string  $volume  {0-100}
   * @return array   status
@@ -168,7 +168,7 @@ class Instance extends RestClient
   
   
   /**
-  * setVolumeUp
+  * setVolumeUp increases the volume by 5
   *
   * @return array status
   * @api
@@ -179,7 +179,7 @@ class Instance extends RestClient
     }
   
   /**
-  * setVolumeDown
+  * setVolumeDown reduces the volume by 5
   *
   * @return array status
   * @api
@@ -190,7 +190,7 @@ class Instance extends RestClient
     }
 
   /**
-  * getStatus
+  * getStatus returns the current instance status
   *
   * @return array status
   * @api
@@ -202,18 +202,18 @@ class Instance extends RestClient
     }
 
   /**
-  * getInstanceLog
+  * getLog returns the instance log 
   *
   * @return array log
   * @api
   */
-    public function getInstanceLog()
+    public function getLog()
     {
         return $this->request('/bot/i/'.$this->uuid.'/log');
     }
 
   /**
-  * getSettings
+  * getSettings returns the instance settings
   *
   * @return array users
   * @api
@@ -224,7 +224,7 @@ class Instance extends RestClient
     }
   
   /**
-  * setSettings
+  * setSettings updates the instance settings
   *
   * @param array $data array of properties
   * @return array status
@@ -237,7 +237,7 @@ class Instance extends RestClient
   
   
   /**
-  * getChannels
+  * getChannels returns the channels of the connected TS³ or Discord server
   *
   * @return array channels
   * @api
@@ -248,18 +248,18 @@ class Instance extends RestClient
     }
   
   /**
-  * uploadAvatar
+  * uploadAvatar uploads a avatar from a local file
   *
   * @param string $path /var/www/image.jpg
   * @return array status
   */
     public function uploadAvatar($path)
     {
-        return $this->request('/bot/i/'.$this->uuid.'/avatar', 'POST', file_get_contents($path));
+        return $this->request('/bot/i/'.$this->uuid.'/avatar', 'POST', file_get_contents($path), True);
     }
   
   /**
-  * deleteAvatar
+  * deleteAvatar deletes the current avatar
   *
   * @return array status
   */
@@ -269,7 +269,7 @@ class Instance extends RestClient
     }
 
   /**
-  * getQueueTracks
+  * getQueueTracks returns the tracks in the queue
   *
   * @return array files
   */
@@ -279,7 +279,7 @@ class Instance extends RestClient
     }
 
   /**
-  * appendQueueTrack
+  * appendQueueTrack adds a track to the queue
   *
   * @param string $trackUUID uuid of the track
   * @return array status
@@ -290,7 +290,7 @@ class Instance extends RestClient
     }
   
   /**
-  * prependQueueTrack
+  * prependQueueTrack adds a track to the beginning of the queue
   *
   * @param string $trackUUID track uuid
   * @return array status
@@ -302,7 +302,7 @@ class Instance extends RestClient
   
   
   /**
-  * deleteQueueTrack
+  * deleteQueueTrack deletes a track in the queue
   *
   * @param integer $trackPosition  first entry = 0
   * @return array status
@@ -320,7 +320,7 @@ class Instance extends RestClient
   
   
   /**
-  * deleteQueueTracks
+  * deleteQueueTracks deletes all the tracks in the queue
   *
   * @return array status
   */
@@ -331,7 +331,7 @@ class Instance extends RestClient
   
   
   /**
-  * say
+  * say will say the given text via the tts
   *
   * @param  string  $text          Welcome
   * @param  string  $locale        en
@@ -346,7 +346,7 @@ class Instance extends RestClient
     }
   
   /**
-  * playTrack
+  * playTrack will play the given track
   *
   * @param  string  $trackUUID   UUID of the track
   * @return array   status
@@ -358,7 +358,7 @@ class Instance extends RestClient
   
   
   /**
-  * playURL
+  * playURL will play the given URL
   *
   * @param string $url stream url
   * @return array status
@@ -370,7 +370,7 @@ class Instance extends RestClient
   
   
 /**
-  * playPlaylist
+  * playPlaylist will play the given playlist
   *
   * @param string $playlistUUID uuid of a playlist
   * @param string $playlistIndex 0
@@ -382,7 +382,7 @@ class Instance extends RestClient
     }
   
   /**
-  * playPrevious
+  * playPrevious will play the previous track
   *
   * @return array status
   */
@@ -393,7 +393,7 @@ class Instance extends RestClient
   
   
 /**
-  * playNext
+  * playNext will play the next track
   *
   * @return array status
   */
@@ -403,7 +403,7 @@ class Instance extends RestClient
     }
   
 /**
-  * playRepeat
+  * playRepeat enables the play repeat
   *
   * @param  integer $repeatState   {0=disable,1=enable}
   * @return array status
@@ -414,7 +414,7 @@ class Instance extends RestClient
     }
   
 /**
-  * playShuffle
+  * playShuffle enables the shuffly functionality
   *
   * @param  integer $shuffleState  {0=disable,1=enable}
   * @return array status
@@ -426,7 +426,7 @@ class Instance extends RestClient
   
   
 /**
-  * stop
+  * stop stops the instance
   *
   * @return array status
   */
@@ -437,7 +437,7 @@ class Instance extends RestClient
   
   
 /**
-  * seekPlayback
+  * seekPlayback seeks to a given position
   *
   * @param  integer  $position      0
   * @return array status
@@ -449,7 +449,7 @@ class Instance extends RestClient
   
   
 /**
-  * getPlayedTracks
+  * getPlayedTracks will return the played tracks
   *
   * @return array   array of uuids
   */

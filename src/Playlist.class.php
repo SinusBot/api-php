@@ -58,7 +58,7 @@ class Playlist extends RestClient
         ]);
     }
   /**
-  * getPlaylistTracks returns the tracks of the given playlist
+  * getPlaylistTracks returns the tracks of the playlist
   *
   * @return array files
   */
@@ -68,7 +68,7 @@ class Playlist extends RestClient
     }
   
 /**
-  * addPlaylistTrack adds a track to the given playlist
+  * addPlaylistTrack adds a track to the playlist
   *
   * @param string $trackUUID uuid of the track
   * @return array status
@@ -81,7 +81,7 @@ class Playlist extends RestClient
     }
    
   /**
-  * deleteTrack
+  * deleteTrack deletes a track from the playlist
   *
   * @param integer $trackPosition first entry = 0
   * @return array status
@@ -92,7 +92,7 @@ class Playlist extends RestClient
     }
    
   /**
-  * deleteTracks
+  * deleteTracks deletes all the tracks in the playlist
   *
   * @return array status
   */
