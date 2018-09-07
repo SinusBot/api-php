@@ -26,7 +26,7 @@ class Playlist extends RestClient
   * Playlist stores the initial received playlist data
   * @var array
   */
-  private $playlist = null;
+    private $playlist = null;
   /**
   * __construct
   *
@@ -71,28 +71,28 @@ class Playlist extends RestClient
   *
   * @return string name
   */
-  public function getName()
-  {
-      return array_key_exists('name', $this->playlist)?$this->playlist['name']:'';
-  }
+    public function getName()
+    {
+        return array_key_exists('name', $this->playlist)?$this->playlist['name']:'';
+    }
   /**
   * getEntries returns the track entries
   *
   * @return array track entries
   */
-  public function getEntries()
-  {
-      return array_key_exists('entries', $this->playlist)?$this->playlist['entries']:'';
-  }
+    public function getEntries()
+    {
+        return array_key_exists('entries', $this->playlist)?$this->playlist['entries']:'';
+    }
   /**
   * getSource returns the source of the playlist
   *
   * @return string source
   */
-  public function getSource()
-  {
-      return array_key_exists('source', $this->playlist)?$this->playlist['source']:'';
-  }
+    public function getSource()
+    {
+        return array_key_exists('source', $this->playlist)?$this->playlist['source']:'';
+    }
   
  /**
   * addPlaylistTrack adds a track to the playlist

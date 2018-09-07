@@ -101,6 +101,7 @@ class API extends RestClient
         $resp = $this->request('/bot/playlists', 'POST', [
         "name" => $playlistName,
         ]);
+        $resp['name'] = $playlistName;
         return new Playlist($this->token, $this->url, $this->timeout, $resp);
     }
 

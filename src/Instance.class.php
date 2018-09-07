@@ -26,7 +26,7 @@ class Instance extends RestClient
   * Instance stores the initial received instance data
   * @var array
   */
-  private $instance = null;
+    private $instance = null;
   /**
   * __construct
   *
@@ -68,46 +68,46 @@ class Instance extends RestClient
   *
   * @return string instance backend
   */
-  public function getBackend()
-  {
-      return $this->instance['backend'];
-  }
+    public function getBackend()
+    {
+        return $this->instance['backend'];
+    }
   /**
   * getNick returns the Bot's nickname
   *
   * @return string nick
   */
-  public function getNick()
-  {
-      return $this->instance['nick'];
-  }
+    public function getNick()
+    {
+        return $this->instance['nick'];
+    }
   /**
   * getName returns the Bot's name
   *
   * @return string name
   */
-  public function getName()
-  {
-      return $this->instance['name'];
-  }
+    public function getName()
+    {
+        return $this->instance['name'];
+    }
   /**
   * getServerHost returns the Bot's server host
   *
   * @return string host
   */
-  public function getServerHost()
-  {
-      return $this->instance['serverHost'];
-  }
+    public function getServerHost()
+    {
+        return $this->instance['serverHost'];
+    }
   /**
   * getServerPort returns the Bot's server port
   *
   * @return string port
   */
-  public function getServerPort()
-  {
-      return $this->instance['serverPort'];
-  }
+    public function getServerPort()
+    {
+        return $this->instance['serverPort'];
+    }
   /**
   * delete deletes the instance
   *
