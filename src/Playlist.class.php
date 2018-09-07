@@ -82,7 +82,7 @@ class Playlist extends RestClient
   */
     public function getEntries()
     {
-        return array_key_exists('entries', $this->playlist)?$this->playlist['entries']:'';
+        return array_key_exists('entries', $this->playlist)?$this->playlist['entries']:[];
     }
   /**
   * getSource returns the source of the playlist
