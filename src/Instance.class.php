@@ -10,10 +10,32 @@
 
 namespace SinusBot;
 
+/**
+ * Class Instance
+ *
+ * Instance represents a single instance of the SinusBot
+ */
 class Instance extends RestClient
 {
+  /**
+  * UUID stores the SinusBot Instance UUID
+  * @var string
+  */
     public $uuid = null;
+  /**
+  * Instance holds the Instance array
+  * @var array
+  */
     public $instance = null;
+  /**
+  * __construct
+  *
+  * @param  string  $token    SinusBot auth token
+  * @param  string  $url      SinusBot Bot URL
+  * @param  int     $timeout  HTTP Timeout which is used to perform HTTP API requests
+  * @param  array   $instance SinusBot Instance array.
+  * @return void
+  */
     public function __construct($token, $url, $timeout, $instance)
     {
         $this->token = $token;
@@ -135,9 +157,8 @@ class Instance extends RestClient
   /**
   * setVolume
   *
-  * @param  string  $volume        {0-100}
-  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
-  * @return array status
+  * @param  string  $volume  {0-100}
+  * @return array   status
   * @api
   */
     public function setVolume($volume = 50)
@@ -286,7 +307,7 @@ class Instance extends RestClient
   * @param integer $trackPosition  first entry = 0
   * @return array status
   */
-    public function deleteQueueTrack($trackPosition, $instanceUUID)
+    public function deleteQueueTrack($trackPosition)
     {
         $currentTracks = $this->getQueueTracks();
         if ($currentTracks == null or !is_array($currentTracks)) {
@@ -327,9 +348,8 @@ class Instance extends RestClient
   /**
   * playTrack
   *
-  * @param  string  $trackUUID     6da519a3-5aa3-4f5e-9e2d-81c88e9159ea
-  * @param  string  $instanceUUID  6421eedc-9705-4706-a269-cf6f38fa1a33
-  * @return array status
+  * @param  string  $trackUUID   UUID of the track
+  * @return array   status
   */
     public function playTrack($trackUUID)
     {

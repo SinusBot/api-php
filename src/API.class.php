@@ -10,8 +10,17 @@
 
 namespace SinusBot;
 
+/**
+ * Class API
+ *
+ * API is the main class which will be used to connect to the SinusBot
+ */
 class API extends RestClient
 {
+  /**
+  * UUID stores the SinusBot Bot UUID
+  * @var string
+  */
     public $uuid = null;
 
   /**
@@ -403,7 +412,8 @@ class API extends RestClient
   /**
   * createInstance
   *
-  * @param  string  $nickname  Nickname
+  * @param  string  $nickname  Name of the Bot
+  * @param  string  $backend   SinusBot backend (Discord or TS³)
   * @return array status
   */
     public function createInstance($nickname = "SinusBot MusicBot", $backend = "ts3")
@@ -452,9 +462,9 @@ class API extends RestClient
   /**
   * __construct
   *
-  * @access private
-  * @param  string  $url    http://127.0.0.1:8087
-  * @param  string  $uuid  4852efdc-9705-4706-e469-cfvf77favf33
+  * @param  string  $url      SinusBot Bot URL
+  * @param  string  $uuid     SinusBot Bot UUID
+  * @param  string  $timeout  HTTP Timeout which is used to perform HTTP API requests
   * @return void
   */
     public function __construct($url = 'http://127.0.0.1:8087', $uuid = null, $timeout = 8000)

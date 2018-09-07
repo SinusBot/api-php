@@ -10,10 +10,32 @@
 
 namespace SinusBot;
 
+/**
+ * Playlist Instance
+ *
+ * Playlist represents a single Playlist of the SinusBot
+ */
 class Playlist extends RestClient
 {
+  /**
+  * Playlist holds the Playlist array
+  * @var array
+  */
     public $playlist = null;
+  /**
+  * UUID holds the Playlist UUID
+  * @var array
+  */
     public $uuid = null;
+  /**
+  * __construct
+  *
+  * @param  string  $token    SinusBot auth token
+  * @param  string  $url      SinusBot Bot URL
+  * @param  int     $timeout  HTTP Timeout which is used to perform HTTP API requests
+  * @param  array   $playlist SinusBot Playlist array.
+  * @return void
+  */
     public function __construct($token, $url, $timeout, $playlist)
     {
         $this->token = $token;

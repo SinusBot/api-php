@@ -10,10 +10,27 @@
 
 namespace SinusBot;
 
+/**
+ * Class RestClient
+ *
+ * RestClient is used to perform the http requests to the SinusBot API
+ */
 class RestClient
 {
+  /**
+  * Timeout represents the HTTP timeout when HTTP requests to the SinusBot API are performed
+  * @var int
+  */
     protected $timeout = null;
+  /**
+  * Token is the SinusBot auth token which will be there temporary stored.
+  * @var string
+  */    
     protected $token = null;
+  /**
+  * URL is the SinusBot URL with the port and the HTTP protocol
+  * @var string
+  */   
     protected $url = null;
   /**
   * request executes a request to the SinusBot API
