@@ -1,6 +1,19 @@
 {
     "name": "sinusbot/sinusbot-api-php",
+    "type": "library",
     "description": "PHP Wrapper to communicate with the SinusBot API.",
+    "keywords": [
+        "php",
+        "sinusbot",
+        "api",
+        "http"
+    ],
+    "homepage": "https://github.com/SinusBot/api-php",
+    "license": "GPL-2.0",
+    "authors": [
+        {"name": "Max Schmitt", "email": "max@schmitt.mx"},
+        {"name": "Manuel Hettche", "email": "info@ts3index.com"}
+    ],
     "require-dev": {
         "phpdocumentor/phpdocumentor": "2.*",
         "squizlabs/php_codesniffer": "3.*"
