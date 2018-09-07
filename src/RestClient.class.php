@@ -44,19 +44,19 @@ class RestClient
     protected function request($path, $method = "GET", $payload = null, $encoded = false)
     {
         $ch = curl_init();
-        curl_setopt_array($ch, array(
-        CURLOPT_URL => $this->url.'/api/v1'.$path,
-        CURLOPT_HTTPHEADER => array(
-            "Accept:application/json, text/plain, */*",
-            "Content-Type:application/json",
-            "Authorization: Bearer ".$this->token
-        ),
-        CURLOPT_CUSTOMREQUEST => $method,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_SSL_VERIFYHOST => false,
-        CURLOPT_SSL_VERIFYPEER => false,
-        CURLOPT_TIMEOUT_MS => $this->timeout
-        ));
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $this->url.'/api/v1'.$path,
+            CURLOPT_HTTPHEADER => [
+                "Accept: application/json, text/plain, */*",
+                "Content-Type: application/json",
+                "Authorization: Bearer ".$this->token
+            ],
+            CURLOPT_CUSTOMREQUEST => $method,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_TIMEOUT_MS => $this->timeout
+        ]);
         if ($payload != null) {
             if ($encoded) {
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
@@ -67,11 +67,17 @@ class RestClient
         $data = curl_exec($ch);
     
         if ($data === false) {
-            $data = array('success' => false, 'error' => curl_error($ch));
+            $data = [
+                'success' => false,
+                'error' => curl_error($ch)
+            ];
         } else {
             $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             if ($httpcode != 200 and $httpcode != 201) {
-                $data = array('success' => false, 'error' => $this->getError($httpcode));
+                $data = [
+                    'success' => false,
+                    'error' => $this->getError($httpcode)
+                ];
             }
         }
     
