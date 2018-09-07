@@ -67,7 +67,7 @@ class Instance extends RestClient
     }
 
   /**
-  * delete deletes the instance 
+  * delete deletes the instance
   *
   * @return array status
   */
@@ -202,7 +202,7 @@ class Instance extends RestClient
     }
 
   /**
-  * getLog returns the instance log 
+  * getLog returns the instance log
   *
   * @return array log
   * @api
@@ -255,7 +255,7 @@ class Instance extends RestClient
   */
     public function uploadAvatar($path)
     {
-        return $this->request('/bot/i/'.$this->uuid.'/avatar', 'POST', file_get_contents($path), True);
+        return $this->request('/bot/i/'.$this->uuid.'/avatar', 'POST', file_get_contents($path), true);
     }
   
   /**
