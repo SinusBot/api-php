@@ -467,4 +467,15 @@ class API extends RestClient
         $this->url = $url;
         $this->timeout = $timeout;
     }
+  /**
+  * getInstanceByUUID
+  *
+  * @param  string  $uuid     SinusBot instance UUID
+  * @return Instance
+  */
+    public function getInstanceByUUID($uuid) {
+        $instance = $this->request("/bot/i/".$uuid."/settings");
+        $instance['uuid'] = $uuid;
+        return new Instance($this->token, $this->url, $this->timeout, $instance);
+    }
 }
