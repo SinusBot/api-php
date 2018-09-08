@@ -293,11 +293,16 @@ class API extends RestClient
   /**
   * getUsers
   *
-  * @return array users
+  * @return User[] users
   */
     public function getUsers()
     {
-        return $this->request('/bot/users');
+        $users = $this->request('/bot/users');
+        $out = [];
+        foreach ($users as $user) {
+            array_push($out, new User($this->token, $this->url, $this->timeout, $user));
+        }
+        return $out;
     }
   
   /**
@@ -306,87 +311,52 @@ class API extends RestClient
   * @param  string   $username    Username
   * @param  string   $password    Password
   * @param  integer  $privileges  Bitmask-Value
-  * @return array status
+  * @return User user object
   */
     public function addUser($username, $password, $privileges = 0)
     {
-        return $this->request('/bot/users', 'POST', [
+        $this->request('/bot/users', 'POST', [
         'username'=>$username,
         'password'=>$password,
         'privileges'=>$privileges,
         ]);
+        $users = $this->getUsers();
+        foreach ($users as $user) {
+            if ($user->getName() === $username) {
+                return $user;
+            }
+        }
     }
-  
   /**
-  * setUserPassword
+  * getUserByUUID
   *
-  * @param  string   $password  Password
-  * @param  string   $userUUID  user uuid
-  * @return array status
+  * @param string $uuid User ID
+  * @return User user object
   */
-    public function setUserPassword($password, $userUUID)
+    public function getUserByUUID($uuid)
     {
-        return $this->request('/bot/users/'.$userUUID, 'PATCH', [
-        'password'=>$password,
-        ]);
+        $users = $this->getUsers();
+        foreach ($users as $user) {
+            if ($user->getUUID() === $uuid) {
+                return $user;
+            }
+        }
     }
-  
-  
-/**
-  * setUserPrivileges
-  *
-  * @param integer $privileges Bitmask-Value
-  * @param string  $userUUID user UUID
-  * @return array  status
-  */
-    public function setUserPrivileges($privileges, $userUUID)
-    {
-        return $this->request('/bot/users/'.$userUUID, 'PATCH', [
-        'privileges'=>$privileges,
-        ]);
-    }
-  
   /**
-  * setUserIdentity
+  * getUserByName
   *
-  * @param string $identity teamspeak identity
-  * @param string $userUUID SinusBot user UUID
-  * @return array status
+  * @param string $username Username
+  * @return User user object
   */
-    public function setUserIdentity($identity, $userUUID)
+    public function getUserByName($username)
     {
-        return $this->request('/bot/users/'.$userUUID, 'PATCH', [
-        'tsuid'=>$identity,
-        ]);
+        $users = $this->getUsers();
+        foreach ($users as $user) {
+            if ($user->getName() === $username) {
+                return $user;
+            }
+        }
     }
-  
-  
-  /**
-  * setUserServergroup
-  *
-  * @param  string   $groupID   TeamSpeak Group ID
-  * @param  string   $userUUID  SinusBot User UUID
-  * @return array status
-  */
-    public function setUserServergroup($groupID, $userUUID)
-    {
-        return $this->request('/bot/users/'.$userUUID, 'PATCH', [
-        'tsgid'=>$groupID,
-        ]);
-    }
-  
-  
-  /**
-  * deleteUser
-  *
-  * @param  string  $userUUID SinusBot User UUID
-  * @return array status
-  */
-    public function deleteUser($userUUID)
-    {
-        return $this->request('/bot/users/'.$userUUID, 'DELETE');
-    }
-  
   
   /**
   * getInstances

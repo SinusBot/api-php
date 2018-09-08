@@ -65,20 +65,9 @@ class RestClient
             }
         }
         $data = curl_exec($ch);
-    
-        if ($data === false) {
-            $data = [
-                'success' => false,
-                'error' => curl_error($ch)
-            ];
-        } else {
-            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            if ($httpcode != 200 and $httpcode != 201) {
-                $data = [
-                    'success' => false,
-                    'error' => $this->getError($httpcode)
-                ];
-            }
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($httpcode != 200 && $httpcode != 201) {
+            throw new \Exception('Not expected http status code: '.$httpcode." (".$this->getError($httpcode).")");
         }
     
         curl_close($ch);
