@@ -1,6 +1,6 @@
 <?php
 /**
- * Class Instance | src/Instance.class.php
+ * Class Instance | src/Instance.php
  *
  * A single Instance with his available actions
  *

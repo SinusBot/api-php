@@ -1,6 +1,6 @@
 <?php
 /**
- * Class RestClient | src/RestClient.class.php
+ * Class RestClient | src/RestClient.php
  *
  * RestClient is used to perform the http requests
  *

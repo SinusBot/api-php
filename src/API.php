@@ -1,6 +1,6 @@
 <?php
 /**
- * Class API | src/API.class.php
+ * Class API | src/API.php
  *
  * Main class which will be used to connect to the SinusBot
  *

@@ -1,6 +1,6 @@
 <?php
 /**
- * Class Playlist | src/Playlist.class.php
+ * Class Playlist | src/Playlist.php
  *
  * A single Playlist with his available actions
  *
