@@ -414,10 +414,11 @@ class API extends RestClient
   */
     public function createInstance($nickname = "SinusBot MusicBot", $backend = "ts3")
     {
-        return $this->request('/bot/instances', 'POST', [
+        $resp = $this->request('/bot/instances', 'POST', [
         "backend" => $backend,
         "nick" => $nickname,
         ]);
+        return $this->getInstanceByUUID($resp['uuid']);
     }
   
   /**
