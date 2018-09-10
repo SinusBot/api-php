@@ -8,11 +8,11 @@ $sinusbot->login("admin", "foobar");
 $instances = $sinusbot->getInstances();
 
 foreach ($instances as $instance) {
-    $status = $instance->getStatus();
-    if ($status["playing"]) {
-        echo "Instance: ".$instance->instance["nick"]." is playing";
+    $isPlaying = $instance->isPlaying();
+    if ($isPlaying) {
+        echo "Instance: ".$instance->getNick()." is playing";
     } else {
-        echo "Instance: ".$instance->instance["nick"]." is not playing";
+        echo "Instance: ".$instance->getNick()." is not playing";
     }
     echo "\n";
 }
