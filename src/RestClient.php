@@ -33,6 +33,11 @@ class RestClient
   */
     protected $url = null;
   /**
+  * headers are http headers which will be added on every request
+  * @var array
+  */
+    private $headers = [];
+  /**
   * request executes a request to the SinusBot API
   *
   * @param string $path    /api/v1/<path>
@@ -46,11 +51,11 @@ class RestClient
         $ch = curl_init();
         curl_setopt_array($ch, [
             CURLOPT_URL => $this->url.'/api/v1'.$path,
-            CURLOPT_HTTPHEADER => [
+            CURLOPT_HTTPHEADER => array_merge([
                 "Accept: application/json, text/plain, */*",
                 "Content-Type: application/json",
                 "Authorization: Bearer ".$this->token
-            ],
+            ], $this->headers),
             CURLOPT_CUSTOMREQUEST => $method,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYHOST => false,
@@ -76,6 +81,18 @@ class RestClient
     
   
   /**
+  * addHeader adds a header to every http request
+  *
+  * @param string $key http header key
+  * @param string $value http header value
+  */
+    public function addHeader($key, $value)
+    {
+        array_push($this->headers, [
+            $key => $value,
+        ]);
+    }
+    /**
   * getError returns the string representive to the given http status code
   *
   * @param integer $code http status code

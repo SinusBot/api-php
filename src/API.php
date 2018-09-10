@@ -45,6 +45,15 @@ class API extends RestClient
     }
   
   /**
+  * setAuthToken overrides the auth token
+  *
+  * @param string $token Auth-Token, when you want to override
+  */
+    public function setAuthToken($token)
+    {
+        $this->token = $token;
+    }
+  /**
   * getFiles returns the files for the user account
   *
   * @return array files
