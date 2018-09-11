@@ -92,7 +92,17 @@ class RestClient
             $key => $value,
         ]);
     }
-    /**
+  /**
+  * setAuthToken overrides the auth token
+  *
+  * @param string $token Auth-Token, when you want to override
+  */
+  public function setAuthToken($token)
+  {
+      $this->token = $token;
+  }
+  
+  /**
   * getError returns the string representive to the given http status code
   *
   * @param integer $code http status code
