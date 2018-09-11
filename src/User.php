@@ -30,17 +30,12 @@ class User extends RestClient
   /**
   * __construct
   *
-  * @param  string  $token    SinusBot auth token
-  * @param  string  $url      SinusBot Bot URL
-  * @param  int     $timeout  HTTP Timeout which is used to perform HTTP API requests
-  * @param  array   $user     SinusBot User array.
-  * @return void
+  * @param API      $api    SinusBot API
+  * @param array    $user   SiusBot User array
   */
-    public function __construct($token, $url, $timeout, $user)
+    public function __construct($api, $user)
     {
-        $this->token = $token;
-        $this->url = $url;
-        $this->timeout = $timeout;
+        parent::__construct($api);
         $this->uuid = $user['id'];
         $this->user = $user;
     }

@@ -30,17 +30,13 @@ class Playlist extends RestClient
   /**
   * __construct
   *
-  * @param  string  $token    SinusBot auth token
-  * @param  string  $url      SinusBot Bot URL
-  * @param  int     $timeout  HTTP Timeout which is used to perform HTTP API requests
+  * @param  API     $api      SinusBot API
   * @param  array   $playlist SinusBot Playlist array.
   * @return void
   */
-    public function __construct($token, $url, $timeout, $playlist)
+    public function __construct($api, $playlist)
     {
-        $this->token = $token;
-        $this->url = $url;
-        $this->timeout = $timeout;
+        parent::__construct($api);
         $this->uuid = $playlist['uuid'];
         $this->playlist = $playlist;
     }

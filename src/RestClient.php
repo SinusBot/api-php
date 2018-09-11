@@ -38,6 +38,18 @@ class RestClient
   */
     protected $headers = [];
   /**
+  * __construct
+  *
+  * @param  API  $api SinusBot API
+  */
+    protected function __construct($api)
+    {
+        $this->token = $api->token;
+        $this->url = $api->url;
+        $this->timeout = $api->timeout;
+        $this->headers = $api->headers;
+    }
+  /**
   * request executes a request to the SinusBot API
   *
   * @param string $path    /api/v1/<path>
