@@ -36,7 +36,7 @@ class RestClient
   * headers are http headers which will be added on every request
   * @var array
   */
-    private $headers = [];
+    protected $headers = [];
   /**
   * request executes a request to the SinusBot API
   *
@@ -88,9 +88,7 @@ class RestClient
   */
     public function addHeader($key, $value)
     {
-        array_push($this->headers, [
-            $key => $value,
-        ]);
+        array_push($this->headers, $key.": ".$value);
     }
   /**
   * setAuthToken overrides the auth token
