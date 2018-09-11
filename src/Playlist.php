@@ -11,7 +11,7 @@
 namespace SinusBot;
 
 /**
- * Playlist Instance
+ * Class Playlist
  *
  * Playlist represents a single Playlist of the SinusBot
  */

@@ -11,7 +11,7 @@
 namespace SinusBot;
 
 /**
- * User Instance
+ * Class User
  *
  * User represents a single User of the SinusBot
  */
