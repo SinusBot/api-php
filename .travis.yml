@@ -9,7 +9,7 @@ script:
   - ./vendor/bin/phpcbf --standard=PSR2 src
   - php vendor/bin/phpdoc -d src -t docs --ignore vendor/,docs/,examples/
   # add the SinusBot favicon
-  - wget -q -O images/favicon.ico https://sinusbot.github.io/favicon.ico
+  - wget -q -O docs/images/favicon.ico https://sinusbot.github.io/favicon.ico
 deploy:
   provider: pages
   github-token: $GITHUB_TOKEN
