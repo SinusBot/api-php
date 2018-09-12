@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/SinusBot/api-php.svg?branch=master)](https://travis-ci.org/SinusBot/api-php)
 [![Packagist](https://img.shields.io/packagist/v/sinusbot/sinusbot-api-php.svg)](https://packagist.org/packages/sinusbot/sinusbot-api-php)
 
-> PHP Wrapper to communicate with the [SinusBot](https://sinusbot.com) API.
+> PHP Wrapper to communicate with the [SinusBot API](https://www.sinusbot.com/api/).
 
 ## Usage
 
