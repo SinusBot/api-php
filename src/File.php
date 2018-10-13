@@ -104,7 +104,6 @@ class File extends RestClient
     public function delete()
     {
         return $this->request('/bot/files/'.$this->uuid, 'DELETE');
-        
     }
 
     /**

@@ -23,6 +23,19 @@ class API extends RestClient
     */
     public $uuid = null;
     /**
+    * __construct
+    *
+    * @param  string  $url      SinusBot Bot URL
+    * @param  string  $timeout  HTTP Timeout which is used to perform HTTP API requests
+    * @return void
+    */
+    public function __construct($url = 'http://127.0.0.1:8087', $timeout = 8000)
+    {
+        $this->url = $url;
+        $this->timeout = $timeout;
+    }
+
+    /**
     * login logs on to the SinusBot and retrieves the token
     *
     * @param string $username SinusBot username
@@ -83,7 +96,7 @@ class API extends RestClient
             }
         }
         if (sizeof($todo) !== 0) {
-            throw new Exception('Inconsistent data...');
+            throw new \Exception('Inconsistent data...');
         }
         return $out;
     }
@@ -389,19 +402,6 @@ class API extends RestClient
     {
         return $this->request('/bot/log');
     }
- 
-    /**
-    * __construct
-    *
-    * @param  string  $url      SinusBot Bot URL
-    * @param  string  $timeout  HTTP Timeout which is used to perform HTTP API requests
-    * @return void
-    */
-    public function __construct($url = 'http://127.0.0.1:8087', $timeout = 8000)
-    {
-        $this->url = $url;
-        $this->timeout = $timeout;
-    }    
     
     /**
     * getInstanceByUUID
