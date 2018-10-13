@@ -94,7 +94,7 @@ class API extends RestClient
             }
         }
         if (count($todo) !== 0) {
-            throw new \Exception('Inconsistent data...');
+            throw new \Exception('Invalid parent');
         }
         return $out;
     }
