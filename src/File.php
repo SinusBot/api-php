@@ -17,28 +17,29 @@ namespace SinusBot;
  */
 class File extends RestClient
 {
-  /**
-  * UUID holds the File UUID
-  * @var array
-  */
+    /**
+    * UUID holds the File UUID
+    * @var array
+    */
     public $uuid = null;
-  /**
-  * File stores the initial received file data
-  * @var array
-  */
+    /**
+    * File stores the initial received file data
+    * @var array
+    */
     private $file = null;
-  /**
-  * __construct
-  *
-  * @param API      $api    SinusBot API
-  * @param array    $file   SiusBot File array
-  */
+    /**
+    * __construct
+    *
+    * @param API      $api    SinusBot API
+    * @param array    $file   SiusBot File array
+    */
     public function __construct($api, $file)
     {
         parent::__construct($api);
         $this->uuid = $file['uuid'];
         $this->file = $file;
     }
+
     /**
     * getTitle returns the title
     *

@@ -17,34 +17,34 @@ namespace SinusBot;
  */
 class Instance extends RestClient
 {
-  /**
-  * UUID stores the SinusBot Instance UUID
-  * @var string
-  */
+    /**
+    * UUID stores the SinusBot Instance UUID
+    * @var string
+    */
     public $uuid = null;
-  /**
-  * Instance stores the initial received instance data
-  * @var array
-  */
+    /**
+    * Instance stores the initial received instance data
+    * @var array
+    */
     private $instance = null;
-  /**
-  * __construct
-  *
-  * @param  API     $api      SinusBot API
-  * @param  array   $instance SinusBot Instance array
-  * @return void
-  */
+    /**
+    * __construct
+    *
+    * @param  API     $api      SinusBot API
+    * @param  array   $instance SinusBot Instance array
+    * @return void
+    */
     public function __construct($api, $instance)
     {
         parent::__construct($api);
         $this->uuid = $instance['uuid'];
         $this->instance = $instance;
     }
-  /**
-  * isPlaying returns true when the instance is playing something
-  *
-  * @return boolean
-  */
+    /**
+    * isPlaying returns true when the instance is playing something
+    *
+    * @return boolean
+    */
     public function isPlaying()
     {
         return $this->instance['playing'];
@@ -119,7 +119,6 @@ class Instance extends RestClient
     {
         return $this->request('/bot/instances/'.$this->uuid, 'DELETE');
     }
-  
   
     /**
     * spawn spawns the instance
@@ -197,7 +196,6 @@ class Instance extends RestClient
         return $this->getStatus()['volume'];
     }
   
-  
     /**
     * setVolume sets the volume to a given one
     *
@@ -209,7 +207,6 @@ class Instance extends RestClient
     {
         return $this->request('/bot/i/'.$this->uuid.'/volume/set/'.$volume, 'POST', '');
     }
-  
   
     /**
     * setVolumeUp increases the volume by 5
@@ -255,101 +252,99 @@ class Instance extends RestClient
         return $this->request('/bot/i/'.$this->uuid.'/log');
     }
 
-  /**
-  * getSettings returns the instance settings
-  *
-  * @return array users
-  * @api
-  */
+    /**
+    * getSettings returns the instance settings
+    *
+    * @return array users
+    * @api
+    */
     public function getSettings()
     {
         return $this->request('/bot/i/'.$this->uuid.'/settings');
     }
   
-  /**
-  * setSettings updates the instance settings
-  *
-  * @param array $data array of properties
-  * @return array status
-  * @api
-  */
+    /**
+    * setSettings updates the instance settings
+    *
+    * @param array $data array of properties
+    * @return array status
+    * @api
+    */
     public function setSettings($data)
     {
         return $this->request('/bot/i/'.$this->uuid.'/settings', 'POST', $data);
     }
   
-  
-  /**
-  * getChannels returns the channels of the connected TS³ or Discord server
-  *
-  * @return array channels
-  * @api
-  */
+    /**
+    * getChannels returns the channels of the connected TS³ or Discord server
+    *
+    * @return array channels
+    * @api
+    */
     public function getChannels()
     {
         return $this->request('/bot/i/'.$this->uuid.'/channels');
     }
   
-  /**
-  * uploadAvatar uploads a avatar from a local file
-  *
-  * @param string $path /var/www/image.jpg
-  * @return array status
-  */
+    /**
+    * uploadAvatar uploads a avatar from a local file
+    *
+    * @param string $path /var/www/image.jpg
+    * @return array status
+    */
     public function uploadAvatar($path)
     {
         return $this->request('/bot/i/'.$this->uuid.'/avatar', 'POST', file_get_contents($path), true);
     }
   
-  /**
-  * deleteAvatar deletes the current avatar
-  *
-  * @return array status
-  */
+    /**
+    * deleteAvatar deletes the current avatar
+    *
+    * @return array status
+    */
     public function deleteAvatar()
     {
         return $this->request('/bot/i/'.$this->uuid.'/avatar', 'DELETE');
     }
 
-  /**
-  * getQueueTracks returns the tracks in the queue
-  *
-  * @return array files
-  */
+    /**
+    * getQueueTracks returns the tracks in the queue
+    *
+    * @return array files
+    */
     public function getQueueTracks()
     {
         return $this->request('/bot/i/'.$this->uuid.'/queue');
     }
 
-  /**
-  * appendQueueTrack adds a track to the queue
-  *
-  * @param string $trackUUID uuid of the track
-  * @return array status
-  */
+    /**
+    * appendQueueTrack adds a track to the queue
+    *
+    * @param string $trackUUID uuid of the track
+    * @return array status
+    */
     public function appendQueueTrack($trackUUID)
     {
         return $this->request('/bot/i/'.$this->uuid.'/queue/append/'.$trackUUID, 'POST', "");
     }
   
-  /**
-  * prependQueueTrack adds a track to the beginning of the queue
-  *
-  * @param string $trackUUID track uuid
-  * @return array status
-  */
+    /**
+    * prependQueueTrack adds a track to the beginning of the queue
+    *
+    * @param string $trackUUID track uuid
+    * @return array status
+    */
     public function prependQueueTrack($trackUUID)
     {
         return $this->request('/bot/i/'.$this->uuid.'/queue/prepend/'.$trackUUID, 'POST', "");
     }
   
-  
-  /**
-  * deleteQueueTrack deletes a track in the queue
-  *
-  * @param integer $trackPosition  first entry = 0
-  * @return array status
-  */
+    /**
+    * deleteQueueTrack deletes a track in the queue
+    *
+    * @param integer $trackPosition  first entry = 0
+    * @return array status
+    */
     public function deleteQueueTrack($trackPosition)
     {
         $currentTracks = $this->getQueueTracks();
@@ -361,25 +356,23 @@ class Instance extends RestClient
         return $this->request('/bot/i/'.$this->uuid.'/queue', 'PATCH', array_values($currentTracks));
     }
   
-  
-  /**
-  * deleteQueueTracks deletes all the tracks in the queue
-  *
-  * @return array status
-  */
+    /**
+    * deleteQueueTracks deletes all the tracks in the queue
+    *
+    * @return array status
+    */
     public function deleteQueueTracks()
     {
         return $this->request('/bot/i/'.$this->uuid.'/queue', 'PATCH', []);
     }
   
-  
-  /**
-  * say will say the given text via the tts
-  *
-  * @param  string  $text          Welcome
-  * @param  string  $locale        en
-  * @return array status
-  */
+    /**
+    * say will say the given text via the tts
+    *
+    * @param  string  $text          Welcome
+    * @param  string  $locale        en
+    * @return array status
+    */
     public function say($text, $locale)
     {
         return $this->request('/bot/i/'.$this->uuid.'/say', 'POST', [
@@ -388,107 +381,102 @@ class Instance extends RestClient
         ]);
     }
   
-  /**
-  * playTrack will play the given track
-  *
-  * @param  string  $trackUUID   UUID of the track
-  * @return array   status
-  */
+    /**
+    * playTrack will play the given track
+    *
+    * @param  string  $trackUUID   UUID of the track
+    * @return array   status
+    */
     public function playTrack($trackUUID)
     {
         return $this->request('/bot/i/'.$this->uuid.'/play/byId/'.$trackUUID, 'POST', '');
     }
   
-  
-  /**
-  * playURL will play the given URL
-  *
-  * @param string $url stream url
-  * @return array status
-  */
+    /**
+    * playURL will play the given URL
+    *
+    * @param string $url stream url
+    * @return array status
+    */
     public function playURL($url)
     {
         return $this->request('/bot/i/'.$this->uuid.'/playUrl?url='.urlencode($url), 'POST', '');
     }
   
-  
-/**
-  * playPlaylist will play the given playlist
-  *
-  * @param string $playlistUUID uuid of a playlist
-  * @param string $playlistIndex 0
-  * @return array status
-  */
+    /**
+    * playPlaylist will play the given playlist
+    *
+    * @param string $playlistUUID uuid of a playlist
+    * @param string $playlistIndex 0
+    * @return array status
+    */
     public function playPlaylist($playlistUUID, $playlistIndex = 0)
     {
         return $this->request('/bot/i/'.$this->uuid.'/play/byList/'.$playlistUUID.'/'.$playlistIndex, 'POST', '');
     }
   
-  /**
-  * playPrevious will play the previous track
-  *
-  * @return array status
-  */
+    /**
+    * playPrevious will play the previous track
+    *
+    * @return array status
+    */
     public function playPrevious()
     {
         return $this->request('/bot/i/'.$this->uuid.'/playPrevious', 'POST', '');
     }
   
-  /**
-  * playNext will play the next track
-  *
-  * @return array status
-  */
+    /**
+    * playNext will play the next track
+    *
+    * @return array status
+    */
     public function playNext()
     {
         return $this->request('/bot/i/'.$this->uuid.'/playNext', 'POST', '');
     }
   
-/**
-  * playRepeat enables the play repeat
-  *
-  * @param  integer $repeatState   {0=disable,1=enable}
-  * @return array status
-  */
+    /**
+    * playRepeat enables the play repeat
+    *
+    * @param  integer $repeatState   {0=disable,1=enable}
+    * @return array status
+    */
     public function playRepeat($repeatState = 1)
     {
         return $this->request('/bot/i/'.$this->uuid.'/repeat/'.$repeatState, 'POST', '');
     }
   
-/**
-  * playShuffle enables the shuffly functionality
-  *
-  * @param  integer $shuffleState  {0=disable,1=enable}
-  * @return array status
-  */
+    /**
+    * playShuffle enables the shuffly functionality
+    *
+    * @param  integer $shuffleState  {0=disable,1=enable}
+    * @return array status
+    */
     public function playShuffle($shuffleState = 1)
     {
         return $this->request('/bot/i/'.$this->uuid.'/shuffle/'.$shuffleState, 'POST', '');
     }
   
-  
-/**
-  * stop stops the playback
-  *
-  * @return array status
-  */
+    /**
+    * stop stops the playback
+    *
+    * @return array status
+    */
     public function stop()
     {
         return $this->request('/bot/i/'.$this->uuid.'/stop', 'POST', '');
     }
   
-  
-/**
-  * seekPlayback seeks to a given position
-  *
-  * @param  integer  $position      0
-  * @return array status
-  */
+    /**
+    * seekPlayback seeks to a given position
+    *
+    * @param  integer  $position      0
+    * @return array status
+    */
     public function seekPlayback($position = 0)
     {
         return $this->request('/bot/i/'.$this->uuid.'/seek/'.$position, 'POST', '');
     }
-  
   
     /**
     * getPlayedTracks will return the played tracks
@@ -501,10 +489,10 @@ class Instance extends RestClient
     }
 
     /**
-     * getCurrentTrack returns the current track which will be played
-     *
-     * @return File
-     */
+    * getCurrentTrack returns the current track which will be played
+    *
+    * @return File
+    */
     public function getCurrentTrack()
     {
         return new File($this, $this->getStatus()['currentTrack']);

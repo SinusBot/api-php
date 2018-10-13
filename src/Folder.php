@@ -17,33 +17,34 @@ namespace SinusBot;
  */
 class Folder extends RestClient
 {
-  /**
-  * UUID holds the Folder UUID
-  * @var array
-  */
+    /**
+    * UUID holds the Folder UUID
+    * @var array
+    */
     public $uuid = null;
-  /**
-  * Folder stores the initial received folder data
-  * @var array
-  */
+    /**
+    * Folder stores the initial received folder data
+    * @var array
+    */
     private $folder = null;
-  /**
-  * Children stores the folder childrens
-  * @var array
-  */
+    /**
+    * Children stores the folder childrens
+    * @var array
+    */
     private $children = [];
-  /**
-  * __construct
-  *
-  * @param API      $api    SinusBot API
-  * @param array    $folder   SiusBot Folder array
-  */
+    /**
+    * __construct
+    *
+    * @param API      $api    SinusBot API
+    * @param array    $folder   SiusBot Folder array
+    */
     public function __construct($api, $folder)
     {
         parent::__construct($api);
         $this->uuid = $folder['uuid'];
         $this->folder = $folder;
     }
+    
     /**
     * getTitle returns the title
     *
@@ -54,6 +55,7 @@ class Folder extends RestClient
     {
         return $this->folder['title'];
     }
+
     /**
     * getType returns the file type
     *
@@ -64,6 +66,7 @@ class Folder extends RestClient
     {
         return array_key_exists('type', $this->folder)?$this->folder['type']:'';
     }
+
     /**
     * getUUID returns the uuid
     *
@@ -85,6 +88,7 @@ class Folder extends RestClient
     {
         return $this->folder["parent"];
     }
+
     /**
     * shouldContainsChildren checks if the given file should be
     *
@@ -105,10 +109,11 @@ class Folder extends RestClient
             }
         }
     }
+
     /**
     * getChildren returns the children of the folder
     *
-    * @return []File|[]Folder
+    * @return (\File|\Folder)[]
     * @api
     */
     public function getChildren()
