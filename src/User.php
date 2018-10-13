@@ -17,28 +17,29 @@ namespace SinusBot;
  */
 class User extends RestClient
 {
-  /**
-  * UUID holds the User UUID
-  * @var array
-  */
+    /**
+    * UUID holds the User UUID
+    * @var array
+    */
     public $uuid = null;
-  /**
-  * User stores the initial received user data
-  * @var array
-  */
+    /**
+    * User stores the initial received user data
+    * @var array
+    */
     private $user = null;
-  /**
-  * __construct
-  *
-  * @param API      $api    SinusBot API
-  * @param array    $user   SiusBot User array
-  */
+    /**
+    * __construct
+    *
+    * @param API      $api    SinusBot API
+    * @param array    $user   SiusBot User array
+    */
     public function __construct($api, $user)
     {
         parent::__construct($api);
         $this->uuid = $user['id'];
         $this->user = $user;
     }
+    
     /**
     * getName returns the username
     *
@@ -49,6 +50,7 @@ class User extends RestClient
     {
         return array_key_exists('username', $this->user)?$this->user['username']:'';
     }
+
     /**
     * getUUID returns the uuid
     *
@@ -102,7 +104,6 @@ class User extends RestClient
         ]);
     }
 
-
     /**
     * setServergroup
     *
@@ -116,7 +117,6 @@ class User extends RestClient
         'tsgid'=>strval($groupID),
         ]);
     }
-
 
     /**
     * delete

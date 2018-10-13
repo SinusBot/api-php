@@ -17,31 +17,31 @@ namespace SinusBot;
  */
 class RestClient
 {
-  /**
-  * Timeout represents the HTTP timeout when HTTP requests to the SinusBot API are performed
-  * @var int
-  */
+    /**
+    * Timeout represents the HTTP timeout when HTTP requests to the SinusBot API are performed
+    * @var int
+    */
     protected $timeout = null;
-  /**
-  * Token is the SinusBot auth token which will be there temporary stored.
-  * @var string
-  */
+    /**
+    * Token is the SinusBot auth token which will be there temporary stored.
+    * @var string
+    */
     protected $token = null;
-  /**
-  * URL is the SinusBot URL with the port and the HTTP protocol
-  * @var string
-  */
+    /**
+    * URL is the SinusBot URL with the port and the HTTP protocol
+    * @var string
+    */
     protected $url = null;
-  /**
-  * headers are http headers which will be added on every request
-  * @var array
-  */
+    /**
+    * headers are http headers which will be added on every request
+    * @var array
+    */
     protected $headers = [];
-  /**
-  * __construct
-  *
-  * @param  API  $api SinusBot API
-  */
+    /**
+    * __construct
+    *
+    * @param  API  $api SinusBot API
+    */
     protected function __construct($api)
     {
         $this->token = $api->token;
@@ -49,15 +49,16 @@ class RestClient
         $this->timeout = $api->timeout;
         $this->headers = $api->headers;
     }
-  /**
-  * request executes a request to the SinusBot API
-  *
-  * @param string $path    /api/v1/<path>
-  * @param string $method  http method
-  * @param string $payload http POST payload
-  * @param boolean $encoded when not encoded it will be JSON marshalled
-  * @return array decoded JSON response
-  */
+    
+    /**
+    * request executes a request to the SinusBot API
+    *
+    * @param string $path    /api/v1/<path>
+    * @param string $method  http method
+    * @param string $payload http POST payload
+    * @param boolean $encoded when not encoded it will be JSON marshalled
+    * @return array decoded JSON response
+    */
     protected function request($path, $method = "GET", $payload = null, $encoded = false)
     {
         $ch = curl_init();
@@ -90,34 +91,34 @@ class RestClient
         curl_close($ch);
         return (is_array($data)) ? $data : json_decode($data, true);
     }
-    
   
-  /**
-  * addHeader adds a header to every http request
-  *
-  * @param string $key http header key
-  * @param string $value http header value
-  */
+    /**
+    * addHeader adds a header to every http request
+    *
+    * @param string $key http header key
+    * @param string $value http header value
+    */
     public function addHeader($key, $value)
     {
         array_push($this->headers, $key.": ".$value);
     }
-  /**
-  * setAuthToken overrides the auth token
-  *
-  * @param string $token Auth-Token, when you want to override
-  */
+
+    /**
+    * setAuthToken overrides the auth token
+    *
+    * @param string $token Auth-Token, when you want to override
+    */
     public function setAuthToken($token)
     {
         $this->token = $token;
     }
   
-  /**
-  * getError returns the string representive to the given http status code
-  *
-  * @param integer $code http status code
-  * @return string http status code string representive
-  */
+    /**
+    * getError returns the string representive to the given http status code
+    *
+    * @param integer $code http status code
+    * @return string http status code string representive
+    */
     private function getError($code = 0)
     {
         switch ($code) {
