@@ -153,50 +153,6 @@ class API extends RestClient
     }
   
     /**
-    * moveTrack
-    *
-    * @param string $trackUUID uuid of the track
-    * @param string $parent subfolder UUID, empty value means root folder
-    * @return array status
-    */
-    public function moveTrack($trackUUID, $parent = "")
-    {
-        return $this->request('/bot/files/'.$trackUUID, 'PATCH', [
-        "parent" => $parent,
-        ]);
-    }
-  
-    /**
-    * editTrack
-    *
-    * @param string $trackUUID uuid of the track
-    * @param string $title title
-    * @param string $artist artist
-    * @param string $album album
-    * @return array status
-    */
-    public function editTrack($trackUUID, $title, $artist = "", $album = "")
-    {
-        return $this->request('/bot/files/'.$trackUUID, 'PATCH', [
-        "displayTitle" => $title,
-        "title" => $title,
-        "artist" => $artist,
-        "album" => $album,
-        ]);
-    }
-  
-    /**
-    * deleteTrack
-    *
-    * @param string $trackUUID track uuid
-    * @return array status
-    */
-    public function deleteTrack($trackUUID)
-    {
-        return $this->request('/bot/files/'.$trackUUID, 'DELETE');
-    }
-  
-    /**
     * addURL
     *
     * @param string $url stream URL
@@ -254,17 +210,6 @@ class API extends RestClient
         "type" => "folder",
         "title" => $folderName,
         ]);
-    }
-  
-    /**
-    * deleteFolder
-    *
-    * @param string $folderUUID uuid of the folder
-    * @return array status
-    */
-    public function deleteFolder($folderUUID)
-    {
-        return $this->deleteTrack($folderUUID);
     }
   
     /**
@@ -444,18 +389,7 @@ class API extends RestClient
     {
         return $this->request('/bot/log');
     }
-  
-    /**
-    * getThumbnail
-    *
-    * @param  string  $thumbnail  see getFiles()
-    * @return string  url
-    */
-    public function getThumbnail($thumbnail)
-    {
-        return $this->url.'/cache/'.$thumbnail;
-    }
-  
+ 
     /**
     * __construct
     *

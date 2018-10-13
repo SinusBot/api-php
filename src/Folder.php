@@ -129,6 +129,31 @@ class Folder extends RestClient
     */
     public function delete()
     {
-        return $this->request('/bot/folders/'.$this->uuid, 'DELETE');
+        return $this->request('/bot/files/'.$this->uuid, 'DELETE');
+    }
+
+    /**
+    * edit
+    *
+    * @param Array $options - keys: displayTitle, title, artist, album...
+    * @return array status
+    * @api
+    */
+    public function edit($options)
+    {
+        return $this->request('/bot/files/'.$this->uuid, 'PATCH', $options);
+    }
+
+    /**
+    * move
+    *
+    * @param string $parent subfolder UUID, empty value means root folder
+    * @return array status
+    */
+    public function move($parent = "")
+    {
+        return $this->request('/bot/files/'.$this->uuid, 'PATCH', [
+        "parent" => $parent,
+        ]);
     }
 }

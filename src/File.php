@@ -104,5 +104,42 @@ class File extends RestClient
     public function delete()
     {
         return $this->request('/bot/files/'.$this->uuid, 'DELETE');
+        
+    }
+
+    /**
+    * getThumbnail
+    *
+    * @return string  url
+    */
+    public function getThumbnail()
+    {
+        return array_key_exists('thumbnail', $this->file)?$this->url.'/cache/'.$this->file["thumbnail"]:null;
+    }
+
+
+    /**
+    * edit
+    *
+    * @param Array $options - keys: displayTitle, title, artist, album...
+    * @return array status
+    * @api
+    */
+    public function edit($options)
+    {
+        return $this->request('/bot/files/'.$this->uuid, 'PATCH', $options);
+    }
+
+    /**
+    * move
+    *
+    * @param string $parent subfolder UUID, empty value means root folder
+    * @return array status
+    */
+    public function move($parent = "")
+    {
+        return $this->request('/bot/files/'.$this->uuid, 'PATCH', [
+        "parent" => $parent,
+        ]);
     }
 }
