@@ -2,7 +2,7 @@
 /**
  * Class File | src/File.php
  *
- * A single File with his available actions
+ * A single File with it's available actions
  *
  * @package      SinusBot
  * @author       Max Schmitt <max@schmitt.mx>

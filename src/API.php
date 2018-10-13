@@ -65,21 +65,19 @@ class API extends RestClient
     public function getFiles()
     {
         $files = $this->request('/bot/files');
-        $_out = array_filter($files, function ($file) {
-            return $file["parent"] === "";
-        });
         $out = [];
-        foreach ($_out as $file) {
-            if ($file["type"] === "folder") {
-                array_push($out, new Folder($this, $file));
+        $todo = [];
+        foreach ($files as $file) {
+            if ($file["parent"] === "") {
+                if ($file["type"] === "folder") {
+                    array_push($out, new Folder($this, $file));
+                } else {
+                    array_push($out, new File($this, $file));
+                }
             } else {
-                array_push($out, new File($this, $file));
+                array_push($todo, $file);
             }
         }
-   
-        $todo = array_filter($files, function ($file) {
-            return $file["parent"] !== "";
-        });
         foreach ($out as $o) {
             if ($o->getType() === "folder") {
                 foreach ($todo as $key => $t) {
@@ -95,7 +93,7 @@ class API extends RestClient
                 }
             }
         }
-        if (sizeof($todo) !== 0) {
+        if (count($todo) !== 0) {
             throw new \Exception('Inconsistent data...');
         }
         return $out;

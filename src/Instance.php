@@ -2,7 +2,7 @@
 /**
  * Class Instance | src/Instance.php
  *
- * A single Instance with his available actions
+ * A single Instance with it's available actions
  *
  * @package      SinusBot
  * @author       Max Schmitt <max@schmitt.mx>

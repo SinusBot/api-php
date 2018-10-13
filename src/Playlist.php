@@ -2,7 +2,7 @@
 /**
  * Class Playlist | src/Playlist.php
  *
- * A single Playlist with his available actions
+ * A single Playlist with it's available actions
  *
  * @package      SinusBot
  * @author       Max Schmitt <max@schmitt.mx>

@@ -2,7 +2,7 @@
 /**
  * Class Folder | src/Folder.php
  *
- * A single Folder with his available actions
+ * A single Folder with it's available actions
  *
  * @package      SinusBot
  * @author       Max Schmitt <max@schmitt.mx>
@@ -90,9 +90,10 @@ class Folder extends RestClient
     }
 
     /**
-    * shouldContainsChildren checks if the given file should be
+    * addChildrenIfOK checks recursive if the given file should be
+    * added as a child element. Determined via the "parent" attribute
     *
-    * @return string folder UUID
+    * @return File file
     * @api
     */
     public function addChildrenIfOK($file)
@@ -108,6 +109,7 @@ class Folder extends RestClient
                 }
             }
         }
+        return false;
     }
 
     /**
