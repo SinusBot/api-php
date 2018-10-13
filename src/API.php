@@ -51,7 +51,19 @@ class API extends RestClient
   */
     public function getFiles()
     {
-        return $this->request('/bot/files');
+        $files = $this->request('/bot/files');
+        $_out = array_filter($files, function($file)        {
+            return $file["parent"] !== "";
+        });
+        $out = [];
+        foreach ($out as $file) {
+            array_push($out, new File($this, $file));
+        }
+        $todo = array_filter($files, function($file)        {
+            return $file["parent"] === "";
+        });
+
+        return $out;
     }
   
   /**
