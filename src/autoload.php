@@ -13,4 +13,5 @@ include_once("Instance.php");
 include_once("Playlist.php");
 include_once("User.php");
 include_once("File.php");
+include_once("Folder.php");
 include_once("API.php");

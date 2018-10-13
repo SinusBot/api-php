@@ -47,7 +47,7 @@ class File extends RestClient
     */
     public function getTitle()
     {
-        return $this->file["title"];
+        return array_key_exists('title', $this->file)?$this->file['title']:$this->file["filename"];
     }
     
     /**
@@ -72,6 +72,16 @@ class File extends RestClient
         return array_key_exists('type', $this->file)?$this->file['type']:'';
     }
 
+    /**
+    * getArtist returns the artist
+    *
+    * @return string file UUID
+    * @api
+    */
+    public function getArtist()
+    {
+        return array_key_exists('artist', $this->file)?$this->file['artist']:'';
+    }
 
     /**
     * getUUID returns the uuid

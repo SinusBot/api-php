@@ -50,111 +50,117 @@ class Instance extends RestClient
         return $this->instance['playing'];
     }
   
-  /**
-  * isRunning returns true when the instance is running
-  *
-  * @return boolean
-  */
+    /**
+    * isRunning returns true when the instance is running
+    *
+    * @return boolean
+    */
     public function isRunning()
     {
         return $this->instance['running'];
     }
-  /**
-  * getBackend returns the SinusBot backend (Discord, TS³)
-  *
-  * @return string instance backend
-  */
+
+    /**
+    * getBackend returns the SinusBot backend (Discord, TS³)
+    *
+    * @return string instance backend
+    */
     public function getBackend()
     {
         return $this->instance['backend'];
     }
-  /**
-  * getNick returns the Bot's nickname
-  *
-  * @return string nick
-  */
+
+    /**
+    * getNick returns the Bot's nickname
+    *
+    * @return string nick
+    */
     public function getNick()
     {
         return $this->instance['nick'];
     }
-  /**
-  * getName returns the Bot's name
-  *
-  * @return string name
-  */
+
+    /**
+    * getName returns the Bot's name
+    *
+    * @return string name
+    */
     public function getName()
     {
         return $this->instance['name'];
     }
-  /**
-  * getServerHost returns the Bot's server host
-  *
-  * @return string host
-  */
+
+    /**
+    * getServerHost returns the Bot's server host
+    *
+    * @return string host
+    */
     public function getServerHost()
     {
         return $this->instance['serverHost'];
     }
-  /**
-  * getServerPort returns the Bot's server port
-  *
-  * @return string port
-  */
+
+    /**
+    * getServerPort returns the Bot's server port
+    *
+    * @return string port
+    */
     public function getServerPort()
     {
         return $this->instance['serverPort'];
     }
-  /**
-  * delete deletes the instance
-  *
-  * @return array status
-  */
+
+    /**
+    * delete deletes the instance
+    *
+    * @return array status
+    */
     public function delete()
     {
         return $this->request('/bot/instances/'.$this->uuid, 'DELETE');
     }
   
   
-  /**
-  * spawn spawns the instance
-  *
-  * @return array status
-  */
+    /**
+    * spawn spawns the instance
+    *
+    * @return array status
+    */
     public function spawn()
     {
         return $this->request('/bot/i/'.$this->uuid.'/spawn', 'POST', '');
     }
   
-  /**
-  * respawn restarts the instance
-  *
-  * @return array status
-  */
+    /**
+    * respawn restarts the instance
+    *
+    * @return array status
+    */
     public function respawn()
     {
         return $this->request('/bot/i/'.$this->uuid.'/respawn', 'POST', '');
     }
   
-  /**
-  * kill kills the instance
-  *
-  * @param  string  $instanceUUID  UUID of the SinusBot instance
-  * @return array status
-  */
+    /**
+    * kill kills the instance
+    *
+    * @param  string  $instanceUUID  UUID of the SinusBot instance
+    * @return array status
+    */
     public function kill()
     {
         return $this->request('/bot/i/'.$this->uuid.'/kill', 'POST', '');
     }
   
-  /**
-  * getWebStream returns the webstream URL of the instance
-  *
-  * requires: EnableWebStream = true
-  *
-  * @param  string  $instanceUUID  UUID of the SinusBot instance
-  * @return string  url (opus-encoded-ogg-stream)
-  * @api
-  */
+    /**
+    * getWebStream returns the webstream URL of the instance
+    *
+    * requires: EnableWebStream = true
+    *
+    * @param  string  $instanceUUID  UUID of the SinusBot instance
+    * @return string  url (opus-encoded-ogg-stream)
+    * @api
+    */
     public function getWebStream()
     {
         $token = $this->getWebStreamToken();
@@ -165,86 +171,85 @@ class Instance extends RestClient
         return $this->url.'/api/v1/b/bot/i/'.$this->uuid.'/stream/'.$token;
     }
   
-  /**
-  * getWebStreamToken returns the webstream token
-  *
-  * requires: EnableWebStream = true
-  *
-  * @param  string  $instanceUUID  UUID of the SinusBot instance
-  * @return string  token
-  * @api
-  */
+    /**
+    * getWebStreamToken returns the webstream token
+    *
+    * requires: EnableWebStream = true
+    *
+    * @param  string  $instanceUUID  UUID of the SinusBot instance
+    * @return string  token
+    * @api
+    */
     public function getWebStreamToken()
     {
         $tokenRequest = $this->request('/bot/i/'.$this->uuid.'/streamToken', 'POST', '');
         return (isset($tokenRequest['token'])) ? $tokenRequest['token'] : null;
     }
     
-  /**
-  * getVolume returns the current volume
-  *
-  * @return integer
-  * @api
-  */
+    /**
+    * getVolume returns the current volume
+    *
+    * @return integer
+    * @api
+    */
     public function getVolume()
     {
         return $this->getStatus()['volume'];
     }
   
   
-  /**
-  * setVolume sets the volume to a given one
-  *
-  * @param  string  $volume  {0-100}
-  * @return array   status
-  * @api
-  */
+    /**
+    * setVolume sets the volume to a given one
+    *
+    * @param  string  $volume  {0-100}
+    * @return array   status
+    * @api
+    */
     public function setVolume($volume = 50)
     {
         return $this->request('/bot/i/'.$this->uuid.'/volume/set/'.$volume, 'POST', '');
     }
   
   
-  /**
-  * setVolumeUp increases the volume by 5
-  *
-  * @return array status
-  * @api
-  */
+    /**
+    * setVolumeUp increases the volume by 5
+    *
+    * @return array status
+    * @api
+    */
     public function setVolumeUp()
     {
         return $this->request('/bot/i/'.$this->uuid.'/volume/up', 'POST', '');
     }
   
-  /**
-  * setVolumeDown reduces the volume by 5
-  *
-  * @return array status
-  * @api
-  */
+    /**
+    * setVolumeDown reduces the volume by 5
+    *
+    * @return array status
+    * @api
+    */
     public function setVolumeDown()
     {
         return $this->request('/bot/i/'.$this->uuid.'/volume/down', 'POST', '');
     }
 
-  /**
-  * getStatus returns the current instance status
-  *
-  * @return array status
-  * @api
-  */
+    /**
+    * getStatus returns the current instance status
+    *
+    * @return array status
+    * @api
+    */
     public function getStatus()
     {
         return $this->request('/bot/i/'.$this->uuid.'/status');
-        ;
     }
 
-  /**
-  * getLog returns the instance log
-  *
-  * @return array log
-  * @api
-  */
+    /**
+    * getLog returns the instance log
+    *
+    * @return array log
+    * @api
+    */
     public function getLog()
     {
         return $this->request('/bot/i/'.$this->uuid.'/log');
@@ -485,13 +490,23 @@ class Instance extends RestClient
     }
   
   
-/**
-  * getPlayedTracks will return the played tracks
-  *
-  * @return array   array of uuids
-  */
+    /**
+    * getPlayedTracks will return the played tracks
+    *
+    * @return array   array of uuids
+    */
     public function getPlayedTracks()
     {
         return $this->request('/bot/i/'.$this->uuid.'/recent', 'POST', '');
+    }
+
+    /**
+     * getCurrentTrack returns the current track which will be played
+     *
+     * @return File
+     */
+    public function getCurrentTrack()
+    {
+        return new File($this, $this->getStatus()['currentTrack']);
     }
 }
