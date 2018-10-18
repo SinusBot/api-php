@@ -59,7 +59,7 @@ class Playlist extends RestClient
     *
     * @return array files
     */
-    public function getPlaylistTracks()
+    public function getTracks()
     {
         return $this->request('/bot/playlists/'.$this->uuid);
     }
@@ -100,7 +100,7 @@ class Playlist extends RestClient
     * @param string $trackUUID uuid of the track
     * @return array status
     */
-    public function addPlaylistTrack($trackUUID)
+    public function addTrack($trackUUID)
     {
         return $this->request('/bot/playlists/'.$this->uuid, 'POST', [
         "uuid" => $trackUUID,
