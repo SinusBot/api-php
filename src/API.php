@@ -409,7 +409,7 @@ class API extends RestClient
     */
     public function getInstanceByUUID($uuid)
     {
-        $instance = $this->request("/bot/i/".$uuid."/settings");
+        $instance = $this->request("/bot/i/".$uuid."/status");
         $instance['uuid'] = $uuid;
         return new Instance($this, $instance);
     }
