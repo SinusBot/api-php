@@ -315,6 +315,27 @@ class API extends RestClient
             }
         }
     }
+    
+    /**
+    * editUser
+    *
+    * @param  string   $userId      userId
+    * @param  string   $password    Password
+    * @param  string   $tsuid       TeamSpeak unique identifier (identity)
+    * @param  string   $tsgid       TeamSpeak group-id
+    * @param  string   $privileges  Bitmask-Value
+    * @return User user object
+    */
+    public function editUser($userId, $password = "", $tsuid = "", $tsgid = "", $privileges = 0)
+    {
+    $data = array();
+    if(!empty($password)){$data["password"] = $password;}
+    if(!empty($tsuid)){$data["tsuid"] = $tsuid;}
+    if(!empty($tsgid)){$data["tsgid"] = $tsgid;}
+    if(!empty($privileges)){$data["privileges"] = $privileges;}
+
+    return $this->request('/bot/users/'.$userId, 'PATCH', $data);
+    }
 
     /**
     * getUserByUUID
