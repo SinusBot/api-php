@@ -324,7 +324,7 @@ class API extends RestClient
     * @param  string   $tsuid       TeamSpeak unique identifier (identity)
     * @param  string   $tsgid       TeamSpeak group-id
     * @param  string   $privileges  Bitmask-Value
-    * @return User user object
+    * @return array status
     */
     public function editUser($userId, $password = "", $tsuid = "", $tsgid = "", $privileges = 0)
     {
